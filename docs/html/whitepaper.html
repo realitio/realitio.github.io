@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>White paper &mdash; Reality Check  documentation</title>
+  <title>White paper &mdash; Realitio  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Reality Check  documentation" href="index.html"/>
+    <link rel="top" title="Realitio  documentation" href="index.html"/>
         <link rel="next" title="Contract Internals" href="contract_explanation.html"/>
         <link rel="prev" title="Fees and payments" href="fees.html"/> 
 
@@ -56,7 +56,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Reality Check
+            <a href="index.html" class="icon icon-home"> Realitio
           
 
           
@@ -88,8 +88,8 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="dapp.html">Using the Reality Check dapp</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Using Reality Check from a contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dapp.html">Using the Realitio dapp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Using Realitio from a contract</a></li>
 <li class="toctree-l1"><a class="reference internal" href="encoding.html">How data is encoded</a></li>
 <li class="toctree-l1"><a class="reference internal" href="availability.html">Unavailability and null responses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="arbitrators.html">Arbitrators</a></li>
@@ -131,7 +131,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Reality Check</a>
+          <a href="index.html">Realitio</a>
         
       </nav>
 
@@ -266,7 +266,7 @@
 </div>
 <div class="section" id="spam-and-user-cognitive-exhaustion">
 <h3>Spam and user cognitive exhaustion<a class="headerlink" href="#spam-and-user-cognitive-exhaustion" title="Permalink to this headline">¶</a></h3>
-<p>As described above the system’s funding is a closed loop: Unless arbitration is involved, all funds sent to the contract by anonymous users can be claimed by other anonymous users. With the exception of gas fees, the cost of posting a question is recovered by the person who answers it correctly. This allows users to ask questions with high rewards and answer their own questions, potentially within the same transaction. User interfaces like the Reality Check DApp are unable to tell the difference between a question to which someone genuinely wants an answer, and a question that someone intends to answer themselves, with the goal of promoting the visibility of some information, potentially at the cost of other questions competing for the user’s attention in the same UI. This can be not only a potential nuisance but also a security problem, because a malicious user could flood the system with correctly-answered questions to make it hard for honest users to find wrongly-answered questions.</p>
+<p>As described above the system’s funding is a closed loop: Unless arbitration is involved, all funds sent to the contract by anonymous users can be claimed by other anonymous users. With the exception of gas fees, the cost of posting a question is recovered by the person who answers it correctly. This allows users to ask questions with high rewards and answer their own questions, potentially within the same transaction. User interfaces like the Realitio DApp are unable to tell the difference between a question to which someone genuinely wants an answer, and a question that someone intends to answer themselves, with the goal of promoting the visibility of some information, potentially at the cost of other questions competing for the user’s attention in the same UI. This can be not only a potential nuisance but also a security problem, because a malicious user could flood the system with correctly-answered questions to make it hard for honest users to find wrongly-answered questions.</p>
 <p>When gas costs are high, the gas cost of asking a question and providing the first answer may be sufficient to deter the asking of questions for which an answer is not really wanted. However, if gas costs are low, it may be necessary to provide a “sink” so that not all the funds put in by anonymous users can be reclaimed. The amount of funds required for such a “sink” may vary depending on the ETH exchange rate and other external factors.</p>
 <p>We handle this by allowing the arbitrator to set a per-question fee, which is subtracted from the value sent to the <code class="docutils literal"><span class="pre">askQuestion()</span></code> function. This also provides a potential income stream for the arbitrator in the events that disputes are rare, which they are likely to be if the system is functioning as intended. User interfaces can filter by arbitrator to avoid their users to avoid arbitrators with excessively low fees, or unknown arbitrators who may be controlled by they hypothetical malicious user.</p>
 <p>NB The question fee is not charged if the user asking the question <em>is</em> the arbitrator contract. This is intended to provide additional flexibility to the arbitrator if it turns out to be required in future: By setting an impossibly high fee, they can require that instead of sending questions to the contract directly, they are proxied via the arbitrator. For example, an arbitrator may wish to implement a more flexible fee system, or limit the questions to which it is assigned to a whitelist.</p>
@@ -312,13 +312,13 @@
 <p>The issue of at what point a question is decided, and in what ways it may be reported as undecided, is quite complex. Some uses require reporters to provide the best information available to them at the time, while others are not interested in an answer until it is reasonably clear. Many contracts will only be interested in a positive answer, eg an insurance contract might be interested in finding out when your house has burned down, but have no interest in the infinite number of occasions on which it did not burn down.</p>
 <p>The handling of null, undecided or unclear answers is considered outside the scope of the system and left to the terms of each individual question. The terms of the question may designate a particular value or range of values to mean things like “undecided” or “uncertain”. They may also specify the level of certainty and/or finality that should be applied when evaluating the result at any given time.</p>
 <p>There is no way to pause a question once it has been asked, so if the answer to a question at any given time is “null” or “undecided” or “too early to sensibly ask”, these values may be be settled on as the final result. Contracts consuming this data should be prepared to simply reject any answer they are not interested in, and wait for the same question to be asked again and get an answer in the range that does interest them.</p>
-<p>After settlement Reality Check will preserve information about the question hash, a, timeout, final bond, and finalization date, so consuming contracts can ask a user to send them a question ID, then verify that it meets the minimum conditions it requires to trust the information. It may also be useful to create a wrapper contract that will allow contracts to request an answer meeting its conditions, allowing consumer contracts to send a request and receive a callback, sent by an arbitrary user in return for a fee, on a similar model to the Ethereum Alarm Clock.</p>
+<p>After settlement Realitio will preserve information about the question hash, a, timeout, final bond, and finalization date, so consuming contracts can ask a user to send them a question ID, then verify that it meets the minimum conditions it requires to trust the information. It may also be useful to create a wrapper contract that will allow contracts to request an answer meeting its conditions, allowing consumer contracts to send a request and receive a callback, sent by an arbitrary user in return for a fee, on a similar model to the Ethereum Alarm Clock.</p>
 </div>
 </div>
 <div class="section" id="arbitration-mechanisms">
 <h2>Arbitration mechanisms<a class="headerlink" href="#arbitration-mechanisms" title="Permalink to this headline">¶</a></h2>
-<p>When they post bonds, users are ultimately betting that, in the event that the bonds are escalated to a high level and arbitration is requested, the arbitrator will decide in their favour. Reality Check does not solve the fundamental problem of getting true information on the blockchain (or at all); It instead passes the problem on to an arbitrator contract of the user’s choice. However, the system of escalating bonds should mean that the arbitration contract can use slow, expensive processes for arbitration, while preserving low costs and fast resolution times for the typical case, and passing the cost of arbitration onto “untruthful” participants.</p>
-<p>An arbitrator can be any contract that exposes a public method <code class="docutils literal"><span class="pre">getDisputeFee()</span></code> telling users the fee it charges for a particular question, and the ability to call <code class="docutils literal"><span class="pre">submitAnswerByArbitrator()</span></code> against the Reality Check contract to report the correct answer.</p>
+<p>When they post bonds, users are ultimately betting that, in the event that the bonds are escalated to a high level and arbitration is requested, the arbitrator will decide in their favour. Realitio does not solve the fundamental problem of getting true information on the blockchain (or at all); It instead passes the problem on to an arbitrator contract of the user’s choice. However, the system of escalating bonds should mean that the arbitration contract can use slow, expensive processes for arbitration, while preserving low costs and fast resolution times for the typical case, and passing the cost of arbitration onto “untruthful” participants.</p>
+<p>An arbitrator can be any contract that exposes a public method <code class="docutils literal"><span class="pre">getDisputeFee()</span></code> telling users the fee it charges for a particular question, and the ability to call <code class="docutils literal"><span class="pre">submitAnswerByArbitrator()</span></code> against the Realitio contract to report the correct answer.</p>
 <p>See <a class="reference internal" href="arbitrators.html"><span class="doc">Arbitrators</span></a> for suggested arbitration models.</p>
 </div>
 </div>
