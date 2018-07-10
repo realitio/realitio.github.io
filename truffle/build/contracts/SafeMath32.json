@@ -1,18 +1,18 @@
 {
   "contractName": "SafeMath32",
   "abi": [],
-  "bytecode": "0x60606040523415600e57600080fd5b603580601b6000396000f3006060604052600080fd00a165627a7a72305820606c8be178b07071450e8cfab6f3a1ffc875b10281c459a5da771211d66fd91a0029",
-  "deployedBytecode": "0x6060604052600080fd00a165627a7a72305820606c8be178b07071450e8cfab6f3a1ffc875b10281c459a5da771211d66fd91a0029",
-  "sourceMap": "215:150:11:-;;;;;;;;;;;;;;;;;",
-  "deployedSourceMap": "215:150:11:-;;;;;",
+  "bytecode": "0x60606040523415600e57600080fd5b603580601b6000396000f3006060604052600080fd00a165627a7a723058206b5ea5361d4aa5124c2052de3c4fcad7dce96e295166436cd337053089b07e560029",
+  "deployedBytecode": "0x6060604052600080fd00a165627a7a723058206b5ea5361d4aa5124c2052de3c4fcad7dce96e295166436cd337053089b07e560029",
+  "sourceMap": "215:150:12:-;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "215:150:12:-;;;;;",
   "source": "pragma solidity 0.4.18;\n\n/**\n * @title SafeMath32\n * @dev Math operations with safety checks that throw on error\n * @dev Copy of SafeMath but for uint32 instead of uint256\n * @dev Deleted functions we don't use\n */\nlibrary SafeMath32 {\n  function add(uint32 a, uint32 b) internal pure returns (uint32) {\n    uint32 c = a + b;\n    assert(c >= a);\n    return c;\n  }\n}\n",
-  "sourcePath": "/var/www/html/live/truffle/contracts/SafeMath32.sol",
+  "sourcePath": "/var/www/html/dev/truffle/contracts/SafeMath32.sol",
   "ast": {
     "attributes": {
-      "absolutePath": "/var/www/html/live/truffle/contracts/SafeMath32.sol",
+      "absolutePath": "/var/www/html/dev/truffle/contracts/SafeMath32.sol",
       "exportedSymbols": {
         "SafeMath32": [
-          3341
+          5211
         ]
       }
     },
@@ -25,9 +25,9 @@
             ".18"
           ]
         },
-        "id": 3316,
+        "id": 5186,
         "name": "PragmaDirective",
-        "src": "0:23:11"
+        "src": "0:23:12"
       },
       {
         "attributes": {
@@ -41,10 +41,10 @@
           "documentation": "@title SafeMath32\n@dev Math operations with safety checks that throw on error\n@dev Copy of SafeMath but for uint32 instead of uint256\n@dev Deleted functions we don't use",
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            3341
+            5211
           ],
           "name": "SafeMath32",
-          "scope": 3342
+          "scope": 5212
         },
         "children": [
           {
@@ -57,7 +57,7 @@
               ],
               "name": "add",
               "payable": false,
-              "scope": 3341,
+              "scope": 5211,
               "stateMutability": "pure",
               "superFunction": null,
               "visibility": "internal"
@@ -69,7 +69,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "a",
-                      "scope": 3340,
+                      "scope": 5210,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint32",
@@ -82,20 +82,20 @@
                           "name": "uint32",
                           "type": "uint32"
                         },
-                        "id": 3317,
+                        "id": 5187,
                         "name": "ElementaryTypeName",
-                        "src": "251:6:11"
+                        "src": "251:6:12"
                       }
                     ],
-                    "id": 3318,
+                    "id": 5188,
                     "name": "VariableDeclaration",
-                    "src": "251:8:11"
+                    "src": "251:8:12"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "name": "b",
-                      "scope": 3340,
+                      "scope": 5210,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint32",
@@ -108,19 +108,19 @@
                           "name": "uint32",
                           "type": "uint32"
                         },
-                        "id": 3319,
+                        "id": 5189,
                         "name": "ElementaryTypeName",
-                        "src": "261:6:11"
+                        "src": "261:6:12"
                       }
                     ],
-                    "id": 3320,
+                    "id": 5190,
                     "name": "VariableDeclaration",
-                    "src": "261:8:11"
+                    "src": "261:8:12"
                   }
                 ],
-                "id": 3321,
+                "id": 5191,
                 "name": "ParameterList",
-                "src": "250:20:11"
+                "src": "250:20:12"
               },
               {
                 "children": [
@@ -128,7 +128,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "",
-                      "scope": 3340,
+                      "scope": 5210,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint32",
@@ -141,26 +141,26 @@
                           "name": "uint32",
                           "type": "uint32"
                         },
-                        "id": 3322,
+                        "id": 5192,
                         "name": "ElementaryTypeName",
-                        "src": "294:6:11"
+                        "src": "294:6:12"
                       }
                     ],
-                    "id": 3323,
+                    "id": 5193,
                     "name": "VariableDeclaration",
-                    "src": "294:6:11"
+                    "src": "294:6:12"
                   }
                 ],
-                "id": 3324,
+                "id": 5194,
                 "name": "ParameterList",
-                "src": "293:8:11"
+                "src": "293:8:12"
               },
               {
                 "children": [
                   {
                     "attributes": {
                       "assignments": [
-                        3326
+                        5196
                       ]
                     },
                     "children": [
@@ -168,7 +168,7 @@
                         "attributes": {
                           "constant": false,
                           "name": "c",
-                          "scope": 3340,
+                          "scope": 5210,
                           "stateVariable": false,
                           "storageLocation": "default",
                           "type": "uint32",
@@ -181,14 +181,14 @@
                               "name": "uint32",
                               "type": "uint32"
                             },
-                            "id": 3325,
+                            "id": 5195,
                             "name": "ElementaryTypeName",
-                            "src": "308:6:11"
+                            "src": "308:6:12"
                           }
                         ],
-                        "id": 3326,
+                        "id": 5196,
                         "name": "VariableDeclaration",
-                        "src": "308:8:11"
+                        "src": "308:8:12"
                       },
                       {
                         "attributes": {
@@ -211,13 +211,13 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 3318,
+                              "referencedDeclaration": 5188,
                               "type": "uint32",
                               "value": "a"
                             },
-                            "id": 3327,
+                            "id": 5197,
                             "name": "Identifier",
-                            "src": "319:1:11"
+                            "src": "319:1:12"
                           },
                           {
                             "attributes": {
@@ -225,23 +225,23 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 3320,
+                              "referencedDeclaration": 5190,
                               "type": "uint32",
                               "value": "b"
                             },
-                            "id": 3328,
+                            "id": 5198,
                             "name": "Identifier",
-                            "src": "323:1:11"
+                            "src": "323:1:12"
                           }
                         ],
-                        "id": 3329,
+                        "id": 5199,
                         "name": "BinaryOperation",
-                        "src": "319:5:11"
+                        "src": "319:5:12"
                       }
                     ],
-                    "id": 3330,
+                    "id": 5200,
                     "name": "VariableDeclarationStatement",
-                    "src": "308:16:11"
+                    "src": "308:16:12"
                   },
                   {
                     "children": [
@@ -271,13 +271,13 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 3344,
+                              "referencedDeclaration": 5214,
                               "type": "function (bool) pure",
                               "value": "assert"
                             },
-                            "id": 3331,
+                            "id": 5201,
                             "name": "Identifier",
-                            "src": "330:6:11"
+                            "src": "330:6:12"
                           },
                           {
                             "attributes": {
@@ -300,13 +300,13 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 3326,
+                                  "referencedDeclaration": 5196,
                                   "type": "uint32",
                                   "value": "c"
                                 },
-                                "id": 3332,
+                                "id": 5202,
                                 "name": "Identifier",
-                                "src": "337:1:11"
+                                "src": "337:1:12"
                               },
                               {
                                 "attributes": {
@@ -314,32 +314,32 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 3318,
+                                  "referencedDeclaration": 5188,
                                   "type": "uint32",
                                   "value": "a"
                                 },
-                                "id": 3333,
+                                "id": 5203,
                                 "name": "Identifier",
-                                "src": "342:1:11"
+                                "src": "342:1:12"
                               }
                             ],
-                            "id": 3334,
+                            "id": 5204,
                             "name": "BinaryOperation",
-                            "src": "337:6:11"
+                            "src": "337:6:12"
                           }
                         ],
-                        "id": 3335,
+                        "id": 5205,
                         "name": "FunctionCall",
-                        "src": "330:14:11"
+                        "src": "330:14:12"
                       }
                     ],
-                    "id": 3336,
+                    "id": 5206,
                     "name": "ExpressionStatement",
-                    "src": "330:14:11"
+                    "src": "330:14:12"
                   },
                   {
                     "attributes": {
-                      "functionReturnParameters": 3324
+                      "functionReturnParameters": 5194
                     },
                     "children": [
                       {
@@ -348,38 +348,38 @@
                           "overloadedDeclarations": [
                             null
                           ],
-                          "referencedDeclaration": 3326,
+                          "referencedDeclaration": 5196,
                           "type": "uint32",
                           "value": "c"
                         },
-                        "id": 3337,
+                        "id": 5207,
                         "name": "Identifier",
-                        "src": "357:1:11"
+                        "src": "357:1:12"
                       }
                     ],
-                    "id": 3338,
+                    "id": 5208,
                     "name": "Return",
-                    "src": "350:8:11"
+                    "src": "350:8:12"
                   }
                 ],
-                "id": 3339,
+                "id": 5209,
                 "name": "Block",
-                "src": "302:61:11"
+                "src": "302:61:12"
               }
             ],
-            "id": 3340,
+            "id": 5210,
             "name": "FunctionDefinition",
-            "src": "238:125:11"
+            "src": "238:125:12"
           }
         ],
-        "id": 3341,
+        "id": 5211,
         "name": "ContractDefinition",
-        "src": "215:150:11"
+        "src": "215:150:12"
       }
     ],
-    "id": 3342,
+    "id": 5212,
     "name": "SourceUnit",
-    "src": "0:366:11"
+    "src": "0:366:12"
   },
   "compiler": {
     "name": "solc",
@@ -387,5 +387,5 @@
   },
   "networks": {},
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-05-09T01:40:46.195Z"
+  "updatedAt": "2018-07-09T01:47:31.218Z"
 }

@@ -52,8 +52,8 @@ const INFURA_NODES = {
 // The point where we deployed the contract on the network
 // No point in looking for questions any further back than that
 const START_BLOCKS = {
-    3: 1728899,
-    4: 1400000
+    1: 5932007,
+    4: 2602053
 }
 var START_BLOCK; 
 
@@ -327,15 +327,6 @@ $(function() {
         return false;
     });
 });
-
-// page loaded
-let bounceEffect = function() {
-    if (!$('body').hasClass('is-page-loaded')) {
-        imagesLoaded(document.getElementById('cover'), {background: true}, function () {
-            $('body').addClass('is-page-loaded');
-        });
-    }
-}
 
 /*-------------------------------------------------------------------------------------*/
 // window for posting a question
@@ -2752,7 +2743,7 @@ $(document).on('click', '.arbitration-button', function(e) {
     }).then(function(fee) {
         arbitration_fee = fee;
         //console.log('got fee', arbitration_fee.toString());
-        arbitrator.requestArbitration(question_id, {from:account, value: fee})
+        arbitrator.requestArbitration(question_id, new BigNumber(0), {from:account, value: fee})
         .then(function(result){
             console.log('arbitration is requested.', result);
         });
@@ -3045,7 +3036,7 @@ function fetchAndDisplayQuestions(end_block, fetch_i) {
     }
     if (end_block <= START_BLOCK) {
         console.log('History read complete back to block', START_BLOCK);
-        setTimeout(bounceEffect, 500);
+        $('body').addClass('is-page-loaded');
         return;
     }
 
@@ -3346,8 +3337,6 @@ window.addEventListener('load', function() {
         window.localStorage.setItem('got-it', true);
         $('#footer-notification-bar').css('display', 'none');
     });
-
-    setTimeout(bounceEffect, 8000);
 
     web3js.version.getNetwork((err, net_id) => {
         if (err === null) {

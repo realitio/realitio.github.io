@@ -188,7 +188,7 @@
 </td></tr></table></div>
 <p>This will return <code class="docutils literal"><span class="pre">bytes32</span></code> data, or throw an error (<code class="docutils literal"><span class="pre">revert</span></code>) if the question does not exist or has not been finalized.</p>
 <p>A (yes/no) question would normally be cast to a <code class="docutils literal"><span class="pre">uint256</span></code> type, resulting in <code class="docutils literal"><span class="pre">1</span></code> or <code class="docutils literal"><span class="pre">0</span></code>.</p>
-<p>If you want numerical data, you will usually cast the result to either <code class="docutils literal"><span class="pre">uint256</span></code> or <code class="docutils literal"><span class="pre">int256</span></code>.</p>
+<p>If you want numerical data, you will usually cast the result to <code class="docutils literal"><span class="pre">uint256</span></code>.</p>
 <p>A single choice from a list of options will return an ID representing a zero-based index.</p>
 <dl class="docutils">
 <dt>Who won the US presidential election?</dt>
@@ -240,6 +240,7 @@
 <p>If the arbitrator you have selected charges a per-question fee, you must supply at least this much ETH. Any additonal ETH you send with this call will be assigned as a reward to whoever supplies the final answer to the question. See <a class="reference internal" href="fees.html"><span class="doc">Fees and payments</span></a> for more information.</p>
 <p>The <code class="docutils literal"><span class="pre">bytes32</span></code> ID that will be returned is made by hashing the parameters, plus <code class="docutils literal"><span class="pre">msg.sender</span></code>.</p>
 <p>The <code class="docutils literal"><span class="pre">nonce</span></code> is a user-supplied number that can be used to disambiguated deliberate repeated uses of the same question. You can use <code class="docutils literal"><span class="pre">0</span></code> if you never intend to ask the same question with the same settings twice.</p>
+<p>The <code class="docutils literal"><span class="pre">timeout</span></code> is the time in seconds the question will have after adding an answer before it is automatically finalized. It would typically be around <code class="docutils literal"><span class="pre">1</span> <span class="pre">days</span></code>. The contract sanity-checks set the maximum possible value at <code class="docutils literal"><span class="pre">365</span> <span class="pre">days</span></code>.</p>
 <div class="section" id="accepting-an-answer-only-if-something-has-happened">
 <h3>Accepting an answer only if something has happened<a class="headerlink" href="#accepting-an-answer-only-if-something-has-happened" title="Permalink to this headline">¶</a></h3>
 <p>Once a question has been created and the opening date (if set) reached, it can be answered immediately.</p>
