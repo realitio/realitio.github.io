@@ -425,7 +425,9 @@ var Qi_question_text = 15;
 var Qi_template_id = 16;
 var Qi_block_mined = 17;
 
-BigNumber.config({ RABGE: 256 });
+BigNumber.config({
+    RABGE: 256
+});
 var ONE_ETH = 1000000000000000000;
 
 var block_timestamp_cache = {};
@@ -441,10 +443,30 @@ var account;
 var rc;
 
 var display_entries = {
-    'questions-latest': { 'ids': [], 'vals': [], 'max_store': 50, 'max_show': 6 },
-    'questions-resolved': { 'ids': [], 'vals': [], 'max_store': 50, 'max_show': 6 },
-    'questions-closing-soon': { 'ids': [], 'vals': [], 'max_store': 50, 'max_show': 6 },
-    'questions-high-reward': { 'ids': [], 'vals': [], 'max_store': 50, 'max_show': 6 }
+    'questions-latest': {
+        'ids': [],
+        'vals': [],
+        'max_store': 50,
+        'max_show': 6
+    },
+    'questions-resolved': {
+        'ids': [],
+        'vals': [],
+        'max_store': 50,
+        'max_show': 6
+    },
+    'questions-closing-soon': {
+        'ids': [],
+        'vals': [],
+        'max_store': 50,
+        'max_show': 6
+    },
+    'questions-high-reward': {
+        'ids': [],
+        'vals': [],
+        'max_store': 50,
+        'max_show': 6
+    }
 
     // data for question detail window
 };var question_detail_list = [];
@@ -514,14 +536,16 @@ function setRcBrowserPosition(rcbrowser) {
 
     if (rcbrowser.attr('id') == 'post-a-question-window') {
         var leftMin = winWidth / 2;
-        var left = winWidth / 2 + itemWidth / 10;
+        var left = winWidth / 2 - itemWidth / 2;
         var top = itemHeight / 10;
-        left += 'px';top += 'px';
+        left += 'px';
+        top += 'px';
     } else if (rcbrowser.hasClass('rcbrowser--qa-detail')) {
-        left = parseInt(rand(paddingLeft, leftMax));
-        top = parseInt(rand(paddingTop, topMax));
-        window_position[question_id] = { 'x': left, 'y': top };
-        left += 'px';top += 'px';
+        var leftMin = winWidth / 2;
+        var left = winWidth / 2 - itemWidth / 2;
+        var top = itemHeight / 10;
+        left += 'px';
+        top += 'px';
     }
 
     rcbrowser.css('left', left);
@@ -562,7 +586,12 @@ function setRcBrowserPosition(rcbrowser) {
             bottom: document.documentElement.clientHeight
         },
         endOnly: true,
-        elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+        elementRect: {
+            top: 0,
+            left: 0,
+            bottom: 1,
+            right: 1
+        }
     },
     // enable autoScroll
     autoScroll: false,
@@ -641,6 +670,17 @@ $(function () {
         return false;
     });
 });
+
+// page loaded
+var bounceEffect = function bounceEffect() {
+    if (!$('body').hasClass('is-page-loaded')) {
+        (0, _imagesloaded2.default)(document.getElementById('cover'), {
+            background: true
+        }, function () {
+            $('body').addClass('is-page-loaded');
+        });
+    }
+};
 
 /*-------------------------------------------------------------------------------------*/
 // window for posting a question
@@ -798,7 +838,11 @@ $(document).on('click', '#post-a-question-window .post-question-submit', functio
                     return;
                 }
 
-                rc.askQuestion.sendTransaction(template_id, qtext, arbitrator, timeout_val, opening_ts, 0, { from: account, gas: 200000, value: web3js.toWei(new BigNumber(reward.val()), 'ether').plus(fee) }).then(function (txid) {
+                rc.askQuestion.sendTransaction(template_id, qtext, arbitrator, timeout_val, opening_ts, 0, {
+                    from: account,
+                    gas: 200000,
+                    value: web3js.toWei(new BigNumber(reward.val()), 'ether').plus(fee)
+                }).then(function (txid) {
                     //console.log('sent tx with id', txid);
 
                     // Make a fake log entry
@@ -849,7 +893,8 @@ $(document).on('click', '#post-a-question-window .post-question-submit', functio
                         var top = parseInt(parent_div.css('top').replace('px', ''));
                         var data_x = parseInt(parent_div.attr('data-x')) || 0;
                         var data_y = parseInt(parent_div.attr('data-y')) || 0;
-                        left += data_x;top += data_y;
+                        left += data_x;
+                        top += data_y;
                         window_position[question_id] = {};
                         window_position[question_id]['x'] = left;
                         window_position[question_id]['y'] = top;
@@ -942,7 +987,10 @@ $(document).on('click', '.answer-claim-button', function () {
         //  5 answers 73702
 
         var gas = 140000 + 20000 * claim_args['history_hashes'].length;
-        rc.claimMultipleAndWithdrawBalance.sendTransaction(claim_args['question_ids'], claim_args['answer_lengths'], claim_args['history_hashes'], claim_args['answerers'], claim_args['bonds'], claim_args['answers'], { from: account, gas: gas }).then(function (txid) {
+        rc.claimMultipleAndWithdrawBalance.sendTransaction(claim_args['question_ids'], claim_args['answer_lengths'], claim_args['history_hashes'], claim_args['answerers'], claim_args['bonds'], claim_args['answers'], {
+            from: account,
+            gas: gas
+        }).then(function (txid) {
             //console.log('claiming is ',claiming);
             //console.log('claim result txid', txid);
             for (var qid in claiming) {
@@ -1098,7 +1146,9 @@ function handlePotentialUserAction(entry, is_watch) {
 
         q_min_activity_blocks[question_id] = entry.blockNumber;
 
-        fetchUserEventsAndHandle({ question_id: question_id }, START_BLOCK, 'latest');
+        fetchUserEventsAndHandle({
+            question_id: question_id
+        }, START_BLOCK, 'latest');
 
         updateUserBalanceDisplay();
     }
@@ -1270,7 +1320,10 @@ function scheduleFinalizationDisplayUpdate(question) {
                     }
                 });
             }, update_time);
-            question_event_times[question_id] = { 'finalization_ts': question[Qi_finalization_ts], 'timeout_id': timeout_id };
+            question_event_times[question_id] = {
+                'finalization_ts': question[Qi_finalization_ts],
+                'timeout_id': timeout_id
+            };
         }
     } else {
         //console.log('scheduling not doing: ', isFinalized(question), isAnswered(question));
@@ -1285,14 +1338,23 @@ function filledQuestionDetail(question_id, data_type, freshness, data) {
     }
 
     // Freshness should look like this:
-    // {question_log: 0, question_call: 12345, answers: -1} 
+    // {question_log: 0, question_call: 12345, answers: -1}
 
     // Data should look like this:
     // {question_log: {}, question_call: {}, answers: []} )
 
     // TODO: Maybe also need detected_last_changes for when we know data will change, but don't want to fetch it unless we need it
 
-    var question = { 'freshness': { 'question_log': -1, 'question_json': -1, 'question_call': -1, 'answers': -1 }, 'history': [], 'history_unconfirmed': [] };
+    var question = {
+        'freshness': {
+            'question_log': -1,
+            'question_json': -1,
+            'question_call': -1,
+            'answers': -1
+        },
+        'history': [],
+        'history_unconfirmed': []
+    };
     question[Qi_question_id] = question_id;
     if (question_detail_list[question_id]) {
         question = question_detail_list[question_id];
@@ -1383,7 +1445,7 @@ function filledQuestionDetail(question_id, data_type, freshness, data) {
 
     question_detail_list[question_id] = question;
 
-    //console.log('was called filledQuestionDetail', question_id, data_type, freshness, data); 
+    //console.log('was called filledQuestionDetail', question_id, data_type, freshness, data);
     //console.log('returning question', question);
 
     return question;
@@ -1401,10 +1463,10 @@ function isDataFreshEnough(question_id, data_type, freshness) {
         return false;
     }
     if (question_detail_list[question_id].freshness[data_type] >= freshness) {
-        //console.log('is fresh', question_detail_list[question_id].freshness, freshness) 
+        //console.log('is fresh', question_detail_list[question_id].freshness, freshness)
         return true;
     } else {
-        //console.log('is not fresh', question_detail_list[question_id].freshness[data_type], freshness) 
+        //console.log('is not fresh', question_detail_list[question_id].freshness[data_type], freshness)
         return false;
     }
 }
@@ -1416,7 +1478,12 @@ function _ensureQuestionLogFetched(question_id, freshness) {
         if (isDataFreshEnough(question_id, 'question_log', freshness)) {
             resolve(question_detail_list[question_id]);
         } else {
-            var question_logs = rc.LogNewQuestion({ question_id: question_id }, { fromBlock: START_BLOCK, toBlock: 'latest' });
+            var question_logs = rc.LogNewQuestion({
+                question_id: question_id
+            }, {
+                fromBlock: START_BLOCK,
+                toBlock: 'latest'
+            });
             question_logs.get(function (error, question_arr) {
                 if (error || question_arr.length != 1) {
                     console.log('error in question log', error, question_arr, question_id, START_BLOCK);
@@ -1460,7 +1527,12 @@ function _ensureQuestionTemplateFetched(question_id, template_id, qtext, freshne
                 // The category text should be in the log, but the contract has the block number
                 // This allows us to make a more efficient pin-point log call for the template content
                 rc.templates.call(template_id).then(function (block_num) {
-                    var cat_logs = rc.LogNewTemplate({ template_id: template_id }, { fromBlock: block_num, toBlock: block_num });
+                    var cat_logs = rc.LogNewTemplate({
+                        template_id: template_id
+                    }, {
+                        fromBlock: block_num,
+                        toBlock: block_num
+                    });
                     cat_logs.get(function (error, cat_arr) {
                         if (cat_arr.length == 1) {
                             //console.log('adding template content', cat_arr, 'template_id', template_id);
@@ -1489,7 +1561,12 @@ function _ensureAnswersFetched(question_id, freshness, start_block) {
             resolve(question_detail_list[question_id]);
         } else {
             //console.log('fetching answers from start_block', start_block);
-            var answer_logs = rc.LogNewAnswer({ question_id: question_id }, { fromBlock: start_block, toBlock: 'latest' });
+            var answer_logs = rc.LogNewAnswer({
+                question_id: question_id
+            }, {
+                fromBlock: start_block,
+                toBlock: 'latest'
+            });
             answer_logs.get(function (error, answer_arr) {
                 if (error) {
                     console.log('error in get');
@@ -1662,7 +1739,10 @@ function populateSectionEntry(entry, question_data) {
     entry.attr('data-question-id', question_id);
     //entry.find('.questions__item__title').attr('data-target-id', target_question_id);
 
-    entry.find('.question-title').text(question_json['title']).expander({ expandText: '', slicePoint: 140 });
+    entry.find('.question-title').text(question_json['title']).expander({
+        expandText: '',
+        slicePoint: 140
+    });
     entry.find('.question-bounty').text(bounty);
 
     if (isAnswered(question_data)) {
@@ -1749,6 +1829,7 @@ function handleQuestionLog(item) {
             if (insert_before !== -1) {
                 // TODO: If we include this we have to handle the history too
                 populateSection('questions-resolved', question_data, insert_before);
+                $('#questions-resolved').find('.scanning-questions-category').css('display', 'none');
                 if (display_entries['questions-resolved']['ids'].length > 3 && $('#questions-resolved').find('.loadmore-button').css('display') == 'none') {
                     $('#questions-resolved').find('.loadmore-button').css('display', 'block');
                 }
@@ -1757,6 +1838,7 @@ function handleQuestionLog(item) {
             var insert_before = update_ranking_data('questions-latest', question_id, created, 'desc');
             if (insert_before !== -1) {
                 populateSection('questions-latest', question_data, insert_before);
+                $('#questions-latest').find('.scanning-questions-category').css('display', 'none');
                 if (display_entries['questions-latest']['ids'].length > 3 && $('#questions-latest').find('.loadmore-button').css('display') == 'none') {
                     $('#questions-latest').find('.loadmore-button').css('display', 'block');
                 }
@@ -1765,6 +1847,7 @@ function handleQuestionLog(item) {
             var insert_before = update_ranking_data('questions-high-reward', question_id, bounty, 'desc');
             if (insert_before !== -1) {
                 populateSection('questions-high-reward', question_data, insert_before);
+                $('#questions-high-reward').find('.scanning-questions-category').css('display', 'none');
                 if (display_entries['questions-high-reward']['ids'].length > 3 && $('#questions-high-reward').find('.loadmore-button').css('display') == 'none') {
                     $('#questions-high-reward').find('.loadmore-button').css('display', 'block');
                 }
@@ -1774,6 +1857,7 @@ function handleQuestionLog(item) {
                 var insert_before = update_ranking_data('questions-closing-soon', question_id, question_data[Qi_finalization_ts], 'asc');
                 if (insert_before !== -1) {
                     populateSection('questions-closing-soon', question_data, insert_before);
+                    $('#questions-closing-soon').find('.scanning-questions-category').css('display', 'none');
                     if (display_entries['questions-closing-soon']['ids'].length > 3 && $('#questions-closing-soon').find('.loadmore-button').css('display') == 'none') {
                         $('#questions-closing-soon').find('.loadmore-button').css('display', 'block');
                     }
@@ -1970,8 +2054,12 @@ function displayQuestionDetail(question_detail) {
             var top = parseInt(parent_div.css('top').replace('px', ''));
             var data_x = parseInt(parent_div.attr('data-x')) || 0;
             var data_y = parseInt(parent_div.attr('data-y')) || 0;
-            left += data_x;top += data_y;
-            window_position[question_id] = { 'x': left, 'y': top };
+            left += data_x;
+            top += data_y;
+            window_position[question_id] = {
+                'x': left,
+                'y': top
+            };
             rcqa.remove();
             document.documentElement.style.cursor = ""; // Work around Interact draggable bug
         });
@@ -1985,13 +2073,16 @@ function displayQuestionDetail(question_detail) {
         rcqa.css('display', 'block');
         rcqa.addClass('is-open');
         rcqa.css('z-index', ++zindex);
-        rcqa.css('height', rcqa.height() + 'px');
+        rcqa.css('height', "80%");
+        rcqa.css('max-height', "80%");
         setRcBrowserPosition(rcqa);
         _perfectScrollbar2.default.initialize(rcqa.find('.rcbrowser-inner').get(0));
     }
 
     if (rcqa.find('[name="input-answer"]').hasClass('rcbrowser-input--date--answer')) {
-        rcqa.find('[name="input-answer"]').datepicker({ dateFormat: 'yy-mm-dd' });
+        rcqa.find('[name="input-answer"]').datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
     }
 }
 
@@ -2009,7 +2100,9 @@ function populateQuestionWindow(rcqa, question_detail, is_refresh) {
     date.setTime(question_detail[Qi_creation_ts] * 1000);
     var date_str = monthList[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
     rcqa.find('.rcbrowser-main-header-date').text(date_str);
-    rcqa.find('.question-title').text(question_json['title']).expander({ slicePoint: 200 });
+    rcqa.find('.question-title').text(question_json['title']).expander({
+        slicePoint: 200
+    });
     rcqa.find('.reward-value').text(web3js.fromWei(question_detail[Qi_bounty], 'ether'));
 
     if (question_detail[Qi_block_mined] > 0) {
@@ -2196,12 +2289,16 @@ function possibleClaimableItems(question_detail) {
 
     if (new BigNumber(question_detail[Qi_history_hash]).equals(0)) {
         //console.log('everything already claimed', question_detail[Qi_history_hash]);
-        return { total: new BigNumber(0) };
+        return {
+            total: new BigNumber(0)
+        };
     }
 
     if (!isFinalized(question_detail)) {
         //console.log('not finalized', question_detail);
-        return { total: new BigNumber(0) };
+        return {
+            total: new BigNumber(0)
+        };
     }
 
     //console.log('should be able to claim question ', question_detail);
@@ -2437,14 +2534,16 @@ function renderNotifications(qdata, entry) {
                 ntext = 'You answered a question - "' + question_json['title'] + '"';
                 insertNotificationItem(evt, notification_id, ntext, entry.blockNumber, entry.args.question_id, true);
             } else {
-                var answered_question = rc.LogNewQuestion({ question_id: question_id }, {
+                var answered_question = rc.LogNewQuestion({
+                    question_id: question_id
+                }, {
                     fromBlock: START_BLOCK,
                     toBlock: 'latest'
                 });
                 answered_question.get(function (error, result2) {
                     if (error === null && typeof result2 !== 'undefined') {
                         if (result2[0].args.user == account) {
-                            ntext = 'Someone answered to your question';
+                            ntext = 'Someone answered your question';
                         } else if (qdata['history'][qdata['history'].length - 2].args.user == account) {
                             is_positive = false;
                             ntext = 'Your answer was overwritten';
@@ -2464,7 +2563,9 @@ function renderNotifications(qdata, entry) {
                 ntext = 'You added reward - "' + question_json['title'] + '"';
                 insertNotificationItem(evt, notification_id, ntext, entry.blockNumber, entry.args.question_id, true);
             } else {
-                var funded_question = rc.LogNewQuestion({ question_id: question_id }, {
+                var funded_question = rc.LogNewQuestion({
+                    question_id: question_id
+                }, {
                     fromBlock: START_BLOCK,
                     toBlock: 'latest'
                 });
@@ -2495,7 +2596,12 @@ function renderNotifications(qdata, entry) {
                 ntext = 'You requested arbitration - "' + question_json['title'] + '"';
                 insertNotificationItem(evt, notification_id, ntext, entry.blockNumber, entry.args.question_id, true);
             } else {
-                var arbitration_requested_question = rc.LogNewQuestion({ question_id: question_id }, { fromBlock: START_BLOCK, toBlock: 'latest' });
+                var arbitration_requested_question = rc.LogNewQuestion({
+                    question_id: question_id
+                }, {
+                    fromBlock: START_BLOCK,
+                    toBlock: 'latest'
+                });
                 arbitration_requested_question.get(function (error, result2) {
                     if (error === null && typeof result2 !== 'undefined') {
                         var history_idx = qdata['history'].length - 2;
@@ -2517,7 +2623,12 @@ function renderNotifications(qdata, entry) {
         case 'LogFinalize':
             //console.log('in LogFinalize', entry);
             var notification_id = web3js.sha3('LogFinalize' + entry.args.question_id + entry.args.answer);
-            var finalized_question = rc.LogNewQuestion({ question_id: question_id }, { fromBlock: START_BLOCK, toBlock: 'latest' });
+            var finalized_question = rc.LogNewQuestion({
+                question_id: question_id
+            }, {
+                fromBlock: START_BLOCK,
+                toBlock: 'latest'
+            });
             var timestamp = null;
             // Fake timestamp for our fake finalize event
             if (entry.timestamp) {
@@ -2895,7 +3006,11 @@ $(document).on('click', '.post-answer-button', function (e) {
 
         submitted_question_id_timestamp[question_id] = new Date().getTime();
 
-        return rc.submitAnswer.sendTransaction(question_id, new_answer, current_question[Qi_bond], { from: account, gas: 200000, value: bond });
+        return rc.submitAnswer.sendTransaction(question_id, new_answer, current_question[Qi_bond], {
+            from: account,
+            gas: 200000,
+            value: bond
+        });
     }).then(function (txid) {
         clearForm(parent_div, question_json);
         var fake_history = {
@@ -2997,7 +3112,10 @@ $(document).on('click', '.rcbrowser-submit.rcbrowser-submit--add-reward', functi
     if (isNaN(reward) || reward <= 0) {
         $(this).parent('div').prev('div.input-container').addClass('is-error');
     } else {
-        rc.fundAnswerBounty(question_id, { from: account, value: reward }).then(function (result) {
+        rc.fundAnswerBounty(question_id, {
+            from: account,
+            value: reward
+        }).then(function (result) {
             //console.log('fund bounty', result);
             var container = rcqa.find('.add-reward-container');
             //console.log('removing open', container.length, container);
@@ -3030,6 +3148,14 @@ $(document).on('click', '.arbitration-button', function (e) {
     }).then(function (fee) {
         arbitration_fee = fee;
         //console.log('got fee', arbitration_fee.toString());
+
+        arbitrator.requestArbitration(question_id, {
+            from: account,
+            value: fee
+        }).then(function (result) {
+            console.log('arbitration is requested.', result);
+        });
+
         arbitrator.requestArbitration(question_id, new BigNumber(0), { from: account, value: fee }).then(function (result) {
             console.log('arbitration is requested.', result);
         });
@@ -3230,7 +3356,10 @@ function pageInit(account) {
            We will use a targetted get() to fill in anything we are missing at that time.
      */
 
-    var evts = rc.allEvents({}, { fromBlock: 'latest', toBlock: 'latest' });
+    var evts = rc.allEvents({}, {
+        fromBlock: 'latest',
+        toBlock: 'latest'
+    });
 
     evts.watch(function (error, result) {
         if (!error && result) {
@@ -3285,7 +3414,9 @@ function pageInit(account) {
         }
     });
 
-    fetchUserEventsAndHandle({ user: account }, START_BLOCK, 'latest');
+    fetchUserEventsAndHandle({
+        user: account
+    }, START_BLOCK, 'latest');
 
     // Now the rest of the questions
     fetchAndDisplayQuestions(current_block_number, 0);
@@ -3306,14 +3437,45 @@ function fetchAndDisplayQuestions(end_block, fetch_i) {
         start_block = START_BLOCK;
     }
     if (end_block <= START_BLOCK) {
+
         console.log('History read complete back to block', START_BLOCK);
-        $('body').addClass('is-page-loaded');
+
+        //look at current sections and update blockchain scanning message to
+        //no questions found if no items exist
+
+        if ($("#questions-latest .questions-list > *").length == 3) {
+            $('#questions-latest').find('.no-questions-category').css('display', 'block');
+            $('#questions-latest').find('.scanning-questions-category').css('display', 'none');
+        }
+
+        if ($("#questions-closing-soon .questions-list > *").length == 3) {
+            $('#questions-closing-soon').find('.no-questions-category').css('display', 'block');
+            $('#questions-closing-soon').find('.scanning-questions-category').css('display', 'none');
+        }
+
+        if ($("#questions-high-reward .questions-list > *").length == 3) {
+            $('#questions-high-reward').find('.no-questions-category').css('display', 'block');
+            $('#questions-high-reward').find('.scanning-questions-category').css('display', 'none');
+        }
+
+        if ($("#questions-resolved .questions-list > *").length == 3) {
+            $('#questions-resolved').find('.no-questions-category').css('display', 'block');
+            $('#questions-resolved').find('.scanning-questions-category').css('display', 'none');
+        }
+
+        //setTimeout(bounceEffect, 500);
+
+        //$('body').addClass('is-page-loaded');
+
         return;
     }
 
     //console.log('fetchAndDisplayQuestions', start_block, end_block, fetch_i);
 
-    var question_posted = rc.LogNewQuestion({}, { fromBlock: start_block, toBlock: end_block });
+    var question_posted = rc.LogNewQuestion({}, {
+        fromBlock: start_block,
+        toBlock: end_block
+    });
     question_posted.get(function (error, result) {
         if (error === null && typeof result !== 'undefined') {
             for (var i = 0; i < result.length; i++) {
@@ -3324,7 +3486,7 @@ function fetchAndDisplayQuestions(end_block, fetch_i) {
             console.log(error);
         }
 
-        //console.log('fetch start end ', start_block, end_block, fetch_i);
+        console.log('fetch start end ', start_block, end_block, fetch_i);
         fetchAndDisplayQuestions(start_block - 1, fetch_i + 1);
     });
 }
@@ -3332,7 +3494,10 @@ function fetchAndDisplayQuestions(end_block, fetch_i) {
 function fetchUserEventsAndHandle(filter, start_block, end_block) {
     //console.log('fetching for filter', filter);
 
-    var answer_posted = rc.LogNewAnswer(filter, { fromBlock: start_block, toBlock: end_block });
+    var answer_posted = rc.LogNewAnswer(filter, {
+        fromBlock: start_block,
+        toBlock: end_block
+    });
     answer_posted.get(function (error, result) {
         var answers = result;
         if (error === null && typeof result !== 'undefined') {
@@ -3345,7 +3510,10 @@ function fetchUserEventsAndHandle(filter, start_block, end_block) {
         }
     });
 
-    var bounty_funded = rc.LogFundAnswerBounty(filter, { fromBlock: start_block, toBlock: end_block });
+    var bounty_funded = rc.LogFundAnswerBounty(filter, {
+        fromBlock: start_block,
+        toBlock: end_block
+    });
     bounty_funded.get(function (error, result) {
         if (error === null && typeof result !== 'undefined') {
             for (var i = 0; i < result.length; i++) {
@@ -3356,7 +3524,10 @@ function fetchUserEventsAndHandle(filter, start_block, end_block) {
         }
     });
 
-    var arbitration_requested = rc.LogNotifyOfArbitrationRequest(filter, { fromBlock: start_block, toBlock: end_block });
+    var arbitration_requested = rc.LogNotifyOfArbitrationRequest(filter, {
+        fromBlock: start_block,
+        toBlock: end_block
+    });
     arbitration_requested.get(function (error, result) {
         if (error === null && typeof result !== 'undefined') {
             for (var i = 0; i < result.length; i++) {
@@ -3367,7 +3538,10 @@ function fetchUserEventsAndHandle(filter, start_block, end_block) {
         }
     });
 
-    var finalized = rc.LogFinalize(filter, { fromBlock: start_block, toBlock: end_block });
+    var finalized = rc.LogFinalize(filter, {
+        fromBlock: start_block,
+        toBlock: end_block
+    });
     finalized.get(function (error, result) {
         if (error === null && typeof result !== 'undefined') {
             for (var i = 0; i < result.length; i++) {
@@ -3379,7 +3553,10 @@ function fetchUserEventsAndHandle(filter, start_block, end_block) {
     });
 
     // Now the rest of the questions
-    var question_posted = rc.LogNewQuestion(filter, { fromBlock: START_BLOCK, toBlock: 'latest' });
+    var question_posted = rc.LogNewQuestion(filter, {
+        fromBlock: START_BLOCK,
+        toBlock: 'latest'
+    });
     question_posted.get(function (error, result) {
         if (error === null && typeof result !== 'undefined') {
             for (var i = 0; i < result.length; i++) {
@@ -3605,6 +3782,16 @@ window.addEventListener('load', function () {
         window.localStorage.setItem('got-it', true);
         $('#footer-notification-bar').css('display', 'none');
     });
+
+    var args = parseHash();
+    if (args['category']) {
+        $("#filter-list").find("[data-category='" + args['category'] + "']").addClass("selected");
+    } else {
+        $("#filter-list").find("[data-category='all']").addClass("selected");
+    }
+
+    //setTimeout(bounceEffect, 8000);
+
 
     web3js.version.getNetwork(function (err, net_id) {
         if (err === null) {
