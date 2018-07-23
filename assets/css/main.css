@@ -1625,8 +1625,8 @@ footer .cols ul {
   height: 100%; }
 
 .help-explanation > p {
-  line-height: 1.4;
-  font-size: 13px;
+  line-height: 1.7;
+  font-size: 15px;
   color: #333333; }
 
 .rcbrowser-header {
@@ -2209,8 +2209,14 @@ textarea[name="question-body"]:placeholder-shown {
   margin: 0 0 15px; }
 
 .select-container--question-category {
-  width: calc(100% - 30px);
+  width: calc(100% - 15px);
   float: left; }
+
+.select-container--question-type {
+  width: calc(100% - 15px); }
+
+.select-container--question-arbitrator {
+  width: calc(100% - 15px); }
 
 .select-container--arbitrator {
   margin: 0 0 15px; }
@@ -2609,14 +2615,12 @@ input:placeholder-shown {
 
 .error-container {
   font-size: 13px;
-  color: #333333;
+  color: #ff0000;
   margin-top: 6px;
   padding: 4px 6px 6px;
   line-height: 1.3;
   border-radius: 3px;
-  display: none;
-  background-color: #ff4444;
-  box-shadow: inset 0 0 0 1px #f70000; }
+  display: none; }
 
 .error-container--select {
   margin: 0 0 15px; }
