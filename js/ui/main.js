@@ -7,7 +7,8 @@ const rc_template = require('@realitio/realitio-lib/formatters/template.js');
 
 // The library is Web3, metamask's instance will be web3, we instantiate our own as web3js
 const Web3 = require('web3');
-var web3js;
+var web3js; // This should be the normal metamask instance
+var web3realitio; // We run our own node to handle watch events that can't reliably be done with infura
 
 const rc_json = require('@realitio/realitio-contracts/truffle/build/contracts/RealityCheck.json');
 const arb_json = require('@realitio/realitio-contracts/truffle/build/contracts/Arbitrator.json');
@@ -42,10 +43,10 @@ const BLOCK_EXPLORERS = {
     1337: 'https://etherscan.io'
 };
 
-const INFURA_NODES = {
-    1: 'https://mainnet.infura.io/tSrhlXUe1sNEO5ZWhpUK',
+const RPC_NODES = {
+    1: 'https://rc-dev-3.socialminds.jp', // 'https://mainnet.infura.io/tSrhlXUe1sNEO5ZWhpUK',
     3: 'https://ropsten.infura.io/tSrhlXUe1sNEO5ZWhpUK',
-    4: 'https://rinkeby.infura.io/tSrhlXUe1sNEO5ZWhpUK',
+    4: 'https://rc-dev-4.socialminds.jp', // 'https://rinkeby.infura.io/tSrhlXUe1sNEO5ZWhpUK',
     1337: 'https://localhost:8545'
 };
 
@@ -106,6 +107,7 @@ var Arbitrator;
 
 var account;
 var rc;
+var rcrealitio; // Instance using our node
 
 var display_entries = {
     'questions-latest': {
@@ -486,7 +488,7 @@ $(document).on('click', '#post-a-question-window .post-question-submit', functio
 
     var win = $('#post-a-question-window');
     var question_body = win.find('.question-body');
-    var reward = win.find('.question-reward');
+    var reward_val = win.find('.question-reward').val();
     var timeout = win.find('.step-delay');
     var timeout_val = parseInt(timeout.val());
     var arbitrator = win.find('.arbitrator').val();
@@ -505,6 +507,7 @@ $(document).on('click', '#post-a-question-window .post-question-submit', functio
     for (var i = 0; i < answer_options.length; i++) {
         outcomes[i] = answer_options[i].value;
     }
+    var reward = (reward_val == '') ? new BigNumber(0) : new BigNumber(web3js.toWei(reward_val, 'ether'));
 
     if (validate(win)) {
         var qtype = question_type.val();
@@ -530,7 +533,7 @@ $(document).on('click', '#post-a-question-window .post-question-submit', functio
                 rc.askQuestion.sendTransaction(template_id, qtext, arbitrator, timeout_val, opening_ts, 0, {
                         from: account,
                         gas: 200000,
-                        value: web3js.toWei(new BigNumber(reward.val()), 'ether').plus(fee)
+                        value: reward.plus(fee)
                     })
                     .then(function(txid) {
                         //console.log('sent tx with id', txid);
@@ -557,7 +560,7 @@ $(document).on('click', '#post-a-question-window .post-question-submit', functio
                         fake_call[Qi_arbitrator - 1] = arbitrator;
                         fake_call[Qi_timeout - 1] = new BigNumber(timeout_val);
                         fake_call[Qi_content_hash - 1] = rc_question.contentHash(template_id, parseInt(opening_ts), qtext),
-                            fake_call[Qi_bounty - 1] = web3js.toWei(new BigNumber(reward.val()), 'ether');
+                        fake_call[Qi_bounty - 1] = reward;
                         fake_call[Qi_best_answer - 1] = "0x0";
                         fake_call[Qi_bond - 1] = new BigNumber(0);
                         fake_call[Qi_history_hash - 1] = "0x0";
@@ -726,7 +729,7 @@ function validate(win) {
     }
 
     var reward = win.find('.question-reward');
-    if (reward.val() === '' || reward.val() <= 0) {
+    if (reward.val() === '') {
         reward.parent().parent().addClass('is-error');
         valid = false;
     } else {
@@ -2928,7 +2931,7 @@ $(document).on('keyup', '.rcbrowser-input.rcbrowser-input--number', function(e) 
     } else if ($(this).hasClass('rcbrowser-input--number--bond')) {
         let question_id = $(this).closest('.rcbrowser.rcbrowser--qa-detail').attr('data-question-id');
         let current_idx = question_detail_list[question_id]['history'].length - 1;
-        let current_bond = 0;
+        let current_bond = new BigNumber(0);
         if (current_idx >= 0) {
             current_bond = question_detail_list[question_id]['history'][current_idx].args.bond;
         }
@@ -3087,63 +3090,71 @@ function pageInit(account) {
 
     */
 
-    var evts = rc.allEvents({}, {
-        fromBlock: 'latest',
-        toBlock: 'latest'
-    })
+    var RealityCheckRealitio = contract(rc_json);
+    RealityCheckRealitio.setProvider(new web3.providers.HttpProvider(RPC_NODES[network_id]));
+    console.log('using network', RPC_NODES[network_id]);
+    RealityCheckRealitio.deployed().then(function(instance) {
+        rcrealitio = instance;
 
-    evts.watch(function(error, result) {
-        if (!error && result) {
-            //console.log('got watch event', error, result);
+        var evts = rcrealitio.allEvents({}, {
+            fromBlock: 'latest',
+            toBlock: 'latest'
+        })
 
-            // Check the action to see if it is interesting, if it is then populate notifications etc
-            handlePotentialUserAction(result, true);
+        evts.watch(function(error, result) {
+            if (!error && result) {
+                console.log('got watch event', error, result);
 
-            // Handles front page event changes.
-            // NB We need to reflect other changes too...
-            var evt = result['event'];
-            if (evt == 'LogNewTemplate') {
-                var template_id = result.args.template_id;
-                var question_text = result.args.question_text;
-                template_content[template_id] = question_text;
-                return;
-            } else if (evt == 'LogNewQuestion') {
-                handleQuestionLog(result);
-            } else if (evt == 'LogWithdraw') {
-                updateUserBalanceDisplay();
-            } else {
-                var question_id = result.args.question_id;
+                // Check the action to see if it is interesting, if it is then populate notifications etc
+                handlePotentialUserAction(result, true);
 
-                switch (evt) {
+                // Handles front page event changes.
+                // NB We need to reflect other changes too...
+                var evt = result['event'];
+                if (evt == 'LogNewTemplate') {
+                    var template_id = result.args.template_id;
+                    var question_text = result.args.question_text;
+                    template_content[template_id] = question_text;
+                    return;
+                } else if (evt == 'LogNewQuestion') {
+                    handleQuestionLog(result);
+                } else if (evt == 'LogWithdraw') {
+                    updateUserBalanceDisplay();
+                } else {
+                    var question_id = result.args.question_id;
 
-                    case ('LogNewAnswer'):
-                        //console.log('got LogNewAnswer, block ', result.blockNumber);
-                        ensureQuestionDetailFetched(question_id, 1, 1, result.blockNumber, result.blockNumber).then(function(question) {
-                            updateQuestionWindowIfOpen(question);
-                            //console.log('should be getting latest', question, result.blockNumber);
-                            scheduleFinalizationDisplayUpdate(question);
-                            updateRankingSections(question, Qi_finalization_ts, question[Qi_finalization_ts])
-                        });
-                        break;
+                    switch (evt) {
 
-                    case ('LogFundAnswerBounty'):
-                        ensureQuestionDetailFetched(question_id, 1, 1, result.blockNumber, -1).then(function(question) {
-                            //console.log('updating with question', question);
-                            updateQuestionWindowIfOpen(question);
-                            updateRankingSections(question, Qi_bounty, question[Qi_bounty])
-                        });
-                        break;
+                        case ('LogNewAnswer'):
+                            //console.log('got LogNewAnswer, block ', result.blockNumber);
+                            ensureQuestionDetailFetched(question_id, 1, 1, result.blockNumber, result.blockNumber).then(function(question) {
+                                updateQuestionWindowIfOpen(question);
+                                //console.log('should be getting latest', question, result.blockNumber);
+                                scheduleFinalizationDisplayUpdate(question);
+                                updateRankingSections(question, Qi_finalization_ts, question[Qi_finalization_ts])
+                            });
+                            break;
 
-                    default:
-                        ensureQuestionDetailFetched(question_id, 1, 1, result.blockNumber, -1).then(function(question) {
-                            updateQuestionWindowIfOpen(question);
-                            updateRankingSections(question, Qi_finalization_ts, question[Qi_finalization_ts])
-                        });
+                        case ('LogFundAnswerBounty'):
+                            ensureQuestionDetailFetched(question_id, 1, 1, result.blockNumber, -1).then(function(question) {
+                                //console.log('updating with question', question);
+                                updateQuestionWindowIfOpen(question);
+                                updateRankingSections(question, Qi_bounty, question[Qi_bounty])
+                            });
+                            break;
+
+                        default:
+                            ensureQuestionDetailFetched(question_id, 1, 1, result.blockNumber, -1).then(function(question) {
+                                updateQuestionWindowIfOpen(question);
+                                updateRankingSections(question, Qi_finalization_ts, question[Qi_finalization_ts])
+                            });
+
+                    }
 
                 }
-
             }
-        }
+        });
+
     });
 
     fetchUserEventsAndHandle({
@@ -3198,6 +3209,8 @@ function fetchAndDisplayQuestions(end_block, fetch_i) {
           $('#questions-resolved').find('.scanning-questions-category').css('display', 'none');
         }
 
+        scheduleFallbackTimer();
+
         //setTimeout(bounceEffect, 500);
 
         //$('body').addClass('is-page-loaded');
@@ -3224,6 +3237,25 @@ function fetchAndDisplayQuestions(end_block, fetch_i) {
         console.log('fetch start end ', start_block, end_block, fetch_i);
         fetchAndDisplayQuestions(start_block - 1, fetch_i + 1);
     });
+}
+
+// Sometimes things go wrong getting events
+// To mitigate the damage, run a refresh of the currently-open window etc
+function scheduleFallbackTimer() {
+     window.setInterval(function() {
+        //console.log('checking for open windows');
+        $('div.rcbrowser--qa-detail.is-open').each(function() {
+             var question_id = $(this).attr('data-question-id');
+             console.log('updating window on timer for question', question_id);
+             if (question_id) {
+                 ensureQuestionDetailFetched(question_id, 1, 1, current_block_number, current_block_number).then(function(question) {
+                    updateQuestionWindowIfOpen(question);
+                    scheduleFinalizationDisplayUpdate(question);
+                    updateRankingSections(question, Qi_finalization_ts, question[Qi_finalization_ts])
+                 });
+             }
+        });
+    }, 20000);
 }
 
 function fetchUserEventsAndHandle(filter, start_block, end_block) {
@@ -3444,10 +3476,12 @@ window.addEventListener('load', function() {
     let valid_ids = $('div.error-bar').find('span[data-network-id]').attr('data-network-id').split(',');
     var is_web3_fallback = false;
 
+    web3realitio = new Web3(new Web3.providers.HttpProvider("https://rc-dev-3.socialminds.jp"));
+
     if (typeof web3 === 'undefined') {
         var is_web3_fallback = true;
         // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
-        web3js = new Web3(new Web3.providers.HttpProvider(INFURA_NODES[valid_ids[0]]));
+        web3js = new Web3(new Web3.providers.HttpProvider(RPC_NODES[valid_ids[0]]));
         console.log('no web3js, using infura on network', valid_ids[0]);
         $('body').addClass('error-no-metamask-plugin').addClass('error');
     } else {
@@ -3504,6 +3538,7 @@ window.addEventListener('load', function() {
                     //console.log('fetching question');
                     ensureQuestionDetailFetched(args['question']).then(function(question) {
                         openQuestionWindow(question[Qi_question_id]);
+
                     })
                 }
             });
