@@ -49,6 +49,8 @@ var category = null;
 var template_blocks = {};
 var template_content = TEMPLATE_CONFIG.content;
 
+var last_polled_block;
+
 var QUESTION_TYPE_TEMPLATES = TEMPLATE_CONFIG.base_ids;
 
 var BLOCK_EXPLORERS = {
@@ -1238,7 +1240,7 @@ function _ensureQuestionTemplateFetched(question_id, template_id, qtext, freshne
     });
 }
 
-function _ensureAnswersFetched(question_id, freshness, start_block) {
+function _ensureAnswersFetched(question_id, freshness, start_block, injected_data) {
     var called_block = current_block_number;
     return new Promise(function (resolve, reject) {
         if (isDataFreshEnough(question_id, 'answers', freshness)) {
@@ -1256,6 +1258,28 @@ function _ensureAnswersFetched(question_id, freshness, start_block) {
                     console.log('error in get');
                     reject(error);
                 } else {
+                    // In theory this should get us everything but sometimes it seems to lag
+                    // If this is triggered by an event, and the get didn't return the event, add it to the list ourselves
+                    var done_txhashes = {};
+                    if (injected_data && injected_data['answers'] && injected_data['answers'].length) {
+                        var inj_ans_arr = injected_data['answers'];
+                        for (var i = 0; i < inj_ans_arr.length; i++) {
+                            var inj_ans = inj_ans_arr[i];
+                            for (var j = 0; j < answer_arr.length; j++) {
+                                var ans = answer_arr[j];
+                                if (ans.args.bond.equals(inj_ans.args.bond)) {
+                                    if (ans.transactionHash != inj_ans.transactionHash) {
+                                        // Replaced by a new entry, old one got orphaned
+                                        answer_arr[j] = inj_ans_arr[i];
+                                    }
+                                }
+                                done_txhashes[answer_arr[j].transactionHash] = true;
+                            }
+                            if (!done_txhashes[inj_ans.transactionHash]) {
+                                answer_arr.push(inj_ans);
+                            }
+                        }
+                    }
                     var question = filledQuestionDetail(question_id, 'answers', called_block, answer_arr);
                     resolve(question);
                 }
@@ -1265,7 +1289,7 @@ function _ensureAnswersFetched(question_id, freshness, start_block) {
 }
 
 // question_log is optional, pass it in when we already have it
-function ensureQuestionDetailFetched(question_id, ql, qi, qc, al) {
+function ensureQuestionDetailFetched(question_id, ql, qi, qc, al, injected_data) {
 
     var params = {};
     if (ql == undefined) ql = 1;
@@ -1285,7 +1309,7 @@ function ensureQuestionDetailFetched(question_id, ql, qi, qc, al) {
         }).then(function (q) {
             return _ensureQuestionTemplateFetched(question_id, q[Qi_template_id], q[Qi_question_text], qi);
         }).then(function (q) {
-            return _ensureAnswersFetched(question_id, al, q[Qi_question_created_block]);
+            return _ensureAnswersFetched(question_id, al, q[Qi_question_created_block], injected_data);
         }).then(function (q) {
             resolve(q);
         }).catch(function (e) {
@@ -3014,6 +3038,56 @@ function updateRankingSections(question, changed_field, changed_val) {
     // TODO: Need to update sections that haven't changed position, but changed data
 }
 
+function handleEvent(error, result) {
+
+    // Check the action to see if it is interesting, if it is then populate notifications etc
+    handlePotentialUserAction(result, true);
+
+    // Handles front page event changes.
+    // NB We need to reflect other changes too...
+    var evt = result['event'];
+    if (evt == 'LogNewTemplate') {
+        var template_id = result.args.template_id;
+        var question_text = result.args.question_text;
+        template_content[template_id] = question_text;
+        return;
+    } else if (evt == 'LogNewQuestion') {
+        handleQuestionLog(result);
+    } else if (evt == 'LogWithdraw') {
+        updateUserBalanceDisplay();
+    } else {
+        var question_id = result.args.question_id;
+
+        switch (evt) {
+
+            case 'LogNewAnswer':
+                //console.log('got LogNewAnswer, block ', result.blockNumber);
+                ensureQuestionDetailFetched(question_id, 1, 1, result.blockNumber, result.blockNumber, { 'answers': [result] }).then(function (question) {
+                    updateQuestionWindowIfOpen(question);
+                    //console.log('should be getting latest', question, result.blockNumber);
+                    scheduleFinalizationDisplayUpdate(question);
+                    updateRankingSections(question, Qi_finalization_ts, question[Qi_finalization_ts]);
+                });
+                break;
+
+            case 'LogFundAnswerBounty':
+                ensureQuestionDetailFetched(question_id, 1, 1, result.blockNumber, -1).then(function (question) {
+                    //console.log('updating with question', question);
+                    updateQuestionWindowIfOpen(question);
+                    updateRankingSections(question, Qi_bounty, question[Qi_bounty]);
+                });
+                break;
+
+            default:
+                ensureQuestionDetailFetched(question_id, 1, 1, result.blockNumber, -1).then(function (question) {
+                    updateQuestionWindowIfOpen(question);
+                    updateRankingSections(question, Qi_finalization_ts, question[Qi_finalization_ts]);
+                });
+
+        }
+    }
+}
+
 /*-------------------------------------------------------------------------------------*/
 // initial process
 
@@ -3054,53 +3128,7 @@ function pageInit(account) {
         evts.watch(function (error, result) {
             if (!error && result) {
                 console.log('got watch event', error, result);
-
-                // Check the action to see if it is interesting, if it is then populate notifications etc
-                handlePotentialUserAction(result, true);
-
-                // Handles front page event changes.
-                // NB We need to reflect other changes too...
-                var evt = result['event'];
-                if (evt == 'LogNewTemplate') {
-                    var template_id = result.args.template_id;
-                    var question_text = result.args.question_text;
-                    template_content[template_id] = question_text;
-                    return;
-                } else if (evt == 'LogNewQuestion') {
-                    handleQuestionLog(result);
-                } else if (evt == 'LogWithdraw') {
-                    updateUserBalanceDisplay();
-                } else {
-                    var question_id = result.args.question_id;
-
-                    switch (evt) {
-
-                        case 'LogNewAnswer':
-                            //console.log('got LogNewAnswer, block ', result.blockNumber);
-                            ensureQuestionDetailFetched(question_id, 1, 1, result.blockNumber, result.blockNumber).then(function (question) {
-                                updateQuestionWindowIfOpen(question);
-                                //console.log('should be getting latest', question, result.blockNumber);
-                                scheduleFinalizationDisplayUpdate(question);
-                                updateRankingSections(question, Qi_finalization_ts, question[Qi_finalization_ts]);
-                            });
-                            break;
-
-                        case 'LogFundAnswerBounty':
-                            ensureQuestionDetailFetched(question_id, 1, 1, result.blockNumber, -1).then(function (question) {
-                                //console.log('updating with question', question);
-                                updateQuestionWindowIfOpen(question);
-                                updateRankingSections(question, Qi_bounty, question[Qi_bounty]);
-                            });
-                            break;
-
-                        default:
-                            ensureQuestionDetailFetched(question_id, 1, 1, result.blockNumber, -1).then(function (question) {
-                                updateQuestionWindowIfOpen(question);
-                                updateRankingSections(question, Qi_finalization_ts, question[Qi_finalization_ts]);
-                            });
-
-                    }
-                }
+                handleEvent(error, result);
             }
         });
     });
@@ -3110,6 +3138,7 @@ function pageInit(account) {
     }, START_BLOCK, 'latest');
 
     // Now the rest of the questions
+    last_polled_block = current_block_number;
     fetchAndDisplayQuestions(current_block_number, 0);
 };
 
@@ -3155,6 +3184,7 @@ function fetchAndDisplayQuestions(end_block, fetch_i) {
         }
 
         scheduleFallbackTimer();
+        runPollingLoop();
 
         //setTimeout(bounceEffect, 500);
 
@@ -3181,6 +3211,28 @@ function fetchAndDisplayQuestions(end_block, fetch_i) {
 
         console.log('fetch start end ', start_block, end_block, fetch_i);
         fetchAndDisplayQuestions(start_block - 1, fetch_i + 1);
+    });
+}
+
+function runPollingLoop() {
+
+    console.log('in runPollingLoop from ', last_polled_block);
+    var evts = rc.allEvents({}, {
+        fromBlock: last_polled_block - 100, // account for lag
+        toBlock: 'latest'
+    });
+
+    evts.get(function (error, result) {
+        console.log('got evts', error, result);
+        last_polled_block = current_block_number;
+        if (error === null && typeof result !== 'undefined') {
+            for (var i = 0; i < result.length; i++) {
+                handleEvent(error, result[i]);
+            }
+        } else {
+            console.log(error);
+        }
+        window.setTimeout(runPollingLoop, 30000);
     });
 }
 
