@@ -448,7 +448,34 @@ $('#post-a-question-button,.post-a-question-link').on('click', function (e) {
     if (category) {
         question_window.find("[name='question-category']").val(category);
     }
+
     _perfectScrollbar2.default.initialize(question_window.find('.rcbrowser-inner').get(0));
+
+    $("select[name='question-category'], select[name='arbitrator']").change(function () {
+        $(this).addClass("selected");
+    });
+
+    $("select[name='question-type']").change(function () {
+        $("option", this).each(function () {
+            if ($(this).text().split("Question Type: ")[1]) {
+                var cleanedText = $(this).text().split("Question Type: ")[1];
+                $(this).text(cleanedText);
+            }
+        });
+        var optionText = $("option:selected", this).text();
+        $("option:selected", this).text("Question Type: " + optionText);
+    });
+
+    $("select[name='step-delay']").change(function () {
+        $("option", this).each(function () {
+            if ($(this).text().split("Timeout: ")[1]) {
+                var cleanedText = $(this).text().split("Timeout: ")[1];
+                $(this).text(cleanedText);
+            }
+        });
+        var optionText = $("option:selected", this).text();
+        $("option:selected", this).text("Timeout: " + optionText);
+    });
 });
 
 $('#browse-question-button,.browse-question-link').on('click', function (e) {
@@ -596,12 +623,6 @@ $(document).on('click', '#post-a-question-window .post-question-submit', functio
                 });
             });
         });
-    }
-});
-
-$(document).on('blur', '#opening-ts-datepicker', function (e) {
-    if (!$('#opening-ts-datepicker').val()) {
-        $('#opening-ts-datepicker').css('background-color', '#4d535a');
     }
 });
 
@@ -1677,7 +1698,7 @@ function update_ranking_data(arr_name, id, val, ord) {
         var win = $(this).closest('.rcbrowser');
         var element = $('<div>');
         element.addClass('input-container input-container--answer-option');
-        var input = '<input type="text" name="editOption0" class="rcbrowser-input answer-option form-item" placeholder="Enter the option...">';
+        var input = '<input type="text" name="editOption0" class="rcbrowser-input answer-option form-item" placeholder="Enter an answer...">';
         element.append(input);
         win.find('.error-container--answer-option').before(element);
         element.addClass('is-bounce');
@@ -1877,6 +1898,13 @@ function populateQuestionWindow(rcqa, question_detail, is_refresh) {
             }
         }
     }
+
+    rcqa.find('.bond-value').text(web3js.fromWei(question_detail[Qi_bond], 'ether'));
+    // Set the dispute value on a slight delay
+    // This ensures the latest entry was updated and the user had time to see it when arbitration was requested
+    window.setTimeout(function () {
+        rcqa.find('.arbitration-button').attr('data-last-seen-bond', '0x' + question_detail[Qi_bond].toString(16));
+    }, 2000);
 
     // question settings warning balloon
     var balloon_html = '';
@@ -2847,6 +2875,12 @@ $(document).on('click', '.arbitration-button', function (e) {
         return false;
     }
 
+    var last_seen_bond_hex = $(this).attr('data-last-seen-bond');
+    if (!last_seen_bond_hex) {
+        console.log('Error, last seen bond not populated, aborting arbitration request');
+        return false;
+    }
+
     var arbitration_fee;
     //if (!question_detail[Qi_is_arbitration_due]) {}
     var arbitrator;
@@ -2856,15 +2890,7 @@ $(document).on('click', '.arbitration-button', function (e) {
     }).then(function (fee) {
         arbitration_fee = fee;
         //console.log('got fee', arbitration_fee.toString());
-
-        arbitrator.requestArbitration(question_id, {
-            from: account,
-            value: fee
-        }).then(function (result) {
-            console.log('arbitration is requested.', result);
-        });
-
-        arbitrator.requestArbitration(question_id, new BigNumber(0), { from: account, value: fee }).then(function (result) {
+        arbitrator.requestArbitration(question_id, new BigNumber(last_seen_bond_hex, 16), { from: account, value: arbitration_fee }).then(function (result) {
             console.log('arbitration is requested.', result);
         });
     });
@@ -3184,7 +3210,7 @@ function fetchAndDisplayQuestions(end_block, fetch_i) {
         }
 
         scheduleFallbackTimer();
-        runPollingLoop();
+        runPollingLoop(rc);
 
         //setTimeout(bounceEffect, 500);
 
@@ -3214,11 +3240,11 @@ function fetchAndDisplayQuestions(end_block, fetch_i) {
     });
 }
 
-function runPollingLoop() {
+function runPollingLoop(contract_instance) {
 
     console.log('in runPollingLoop from ', last_polled_block);
-    var evts = rc.allEvents({}, {
-        fromBlock: last_polled_block - 100, // account for lag
+    var evts = contract_instance.allEvents({}, {
+        fromBlock: last_polled_block - 20, // account for lag
         toBlock: 'latest'
     });
 
@@ -3232,7 +3258,7 @@ function runPollingLoop() {
         } else {
             console.log(error);
         }
-        window.setTimeout(runPollingLoop, 30000);
+        window.setTimeout(runPollingLoop, 30000, contract_instance);
     });
 }
 
