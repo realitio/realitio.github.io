@@ -456,7 +456,69 @@ $('#post-a-question-button,.post-a-question-link').on('click', function(e) {
     if (category) {
         question_window.find("[name='question-category']").val(category);
     }
+
     Ps.initialize(question_window.find('.rcbrowser-inner').get(0));
+
+    $("textarea[name='question-body']").on('change keyup paste', function() {
+        if ($(this).val()==""){
+            $(this).parent().addClass('is-error');
+        } else {
+            $(this).parent().removeClass('is-error');
+        }
+    });
+
+    $("select[name='question-category']").change(function(){
+        $(this).addClass("selected");
+
+        var optionLabel = "Category: ";
+
+        $("option", this).each(function() {
+            var option = $(this).text().split(optionLabel)[1];
+            if (option){ $(this).text(option);}
+        });
+
+        var optionText = $("option:selected",this).text();
+        $("option:selected", this).text(optionLabel + optionText);
+
+        $(this).parent().removeClass('is-error');
+    });
+
+    $("select[name='question-type']").change(function(){
+        var optionLabel = "Question Type: ";
+
+        $("option", this).each(function() {
+            var option = $(this).text().split(optionLabel)[1];
+            if (option){ $(this).text(option);}
+        });
+
+        var optionText = $("option:selected",this).text();
+        $("option:selected", this).text(optionLabel + optionText);
+    });
+
+    $("select[name='step-delay']").change(function(){
+        var optionLabel = "Countdown: ";
+
+        $("option", this).each(function() {
+            var option = $(this).text().split(optionLabel)[1];
+            if (option){ $(this).text(option);}
+        });
+
+        var optionText = $("option:selected",this).text();
+        $("option:selected", this).text(optionLabel + optionText);
+    });
+
+    $("select[name='arbitrator']").change(function(){
+        $(this).addClass("selected");
+        var optionLabel = "Arbitrator: ";
+
+        $("option", this).each(function() {
+            var option = $(this).text().split(optionLabel)[1];
+            if (option){ $(this).text(option);}
+        });
+
+        var optionText = $("option:selected",this).text();
+        $("option:selected", this).text(optionLabel + optionText);
+    });
 });
 
 $('#browse-question-button,.browse-question-link').on('click', function(e) {
@@ -611,12 +673,6 @@ $(document).on('click', '#post-a-question-window .post-question-submit', functio
 
 });
 
-$(document).on('blur', '#opening-ts-datepicker', function(e) {
-    if (!$('#opening-ts-datepicker').val()) {
-        $('#opening-ts-datepicker').css('background-color', '#4d535a');
-    }
-});
-
 function isArbitratorValid(arb) {
     var found = false;
     let arbitrator_addrs = $('select.arbitrator').children();
@@ -753,16 +809,15 @@ function validate(win) {
         $('.edit-option-inner').removeClass('is-error');
     }
 
-    var select_ids = ['.question-type', '.arbitrator', '.step-delay'];
+    var select_ids = ['.question-type', '.arbitrator', '.step-delay', '.question-category'];
     for (var id of select_ids) {
-        if (win.find(id).prop('selectedIndex') == 0) {
+        if (win.find(id).val() == "default") {
             win.find(id).parent().addClass('is-error');
             valid = false;
         } else {
             win.find(id).parent().removeClass('is-error');
         }
     }
-
 
     return valid;
 }
@@ -1690,7 +1745,7 @@ function update_ranking_data(arr_name, id, val, ord) {
         var win = $(this).closest('.rcbrowser');
         var element = $('<div>');
         element.addClass('input-container input-container--answer-option');
-        var input = '<input type="text" name="editOption0" class="rcbrowser-input answer-option form-item" placeholder="Enter the option...">';
+        var input = '<input type="text" name="editOption0" class="rcbrowser-input answer-option form-item" placeholder="Enter an answer...">';
         element.append(input);
         win.find('.error-container--answer-option').before(element);
         element.addClass('is-bounce');
@@ -2017,6 +2072,9 @@ function totalClaimable(question_detail) {
     return poss['total'];
 }
 
+/*
+If you get anything from the list, return the whole thing
+*/
 function possibleClaimableItems(question_detail) {
 
     var ttl = new BigNumber(0);
@@ -2052,6 +2110,10 @@ function possibleClaimableItems(question_detail) {
 
     var final_answer = question_detail[Qi_best_answer];
     for (var i = question_detail['history'].length - 1; i >= 0; i--) {
+
+        // TODO: Check the history hash, and if we haven't reached it, keep going until we do
+        // ...since someone may have claimed partway through
+
         var answer = question_detail['history'][i].args.answer;
         var answerer = question_detail['history'][i].args.user;
         var bond = question_detail['history'][i].args.bond;
@@ -2074,9 +2136,10 @@ function possibleClaimableItems(question_detail) {
                     ttl = ttl.plus(bond); // their takeover payment to you
                 }
             }
-            if (is_first) {
-                ttl = ttl.plus(question_detail[Qi_bounty]);
-            }
+            
+        }
+        if (is_first && is_yours) {
+            ttl = ttl.plus(question_detail[Qi_bounty]);
         }
 
         claimable_bonds.push(bond);
@@ -2087,10 +2150,15 @@ function possibleClaimableItems(question_detail) {
         is_first = false;
     }
 
-    if (ttl.gt(0)) {
-        question_ids.push(question_detail[Qi_question_id]);
-        answer_lengths.push(claimable_bonds.length);
+    // Nothing for you to claim, so return nothing
+    if (!ttl.gt(0)) {
+        return {
+            total: new BigNumber(0)
+        };
     }
+
+    question_ids.push(question_detail[Qi_question_id]);
+    answer_lengths.push(claimable_bonds.length);
 
     //console.log('item 0 should match question_data', claimable_history_hashes[0], question_detail[Qi_history_hash]);
 
