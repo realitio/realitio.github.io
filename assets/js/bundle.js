@@ -448,34 +448,7 @@ $('#post-a-question-button,.post-a-question-link').on('click', function (e) {
     if (category) {
         question_window.find("[name='question-category']").val(category);
     }
-
     _perfectScrollbar2.default.initialize(question_window.find('.rcbrowser-inner').get(0));
-
-    $("select[name='question-category'], select[name='arbitrator']").change(function () {
-        $(this).addClass("selected");
-    });
-
-    $("select[name='question-type']").change(function () {
-        $("option", this).each(function () {
-            if ($(this).text().split("Question Type: ")[1]) {
-                var cleanedText = $(this).text().split("Question Type: ")[1];
-                $(this).text(cleanedText);
-            }
-        });
-        var optionText = $("option:selected", this).text();
-        $("option:selected", this).text("Question Type: " + optionText);
-    });
-
-    $("select[name='step-delay']").change(function () {
-        $("option", this).each(function () {
-            if ($(this).text().split("Timeout: ")[1]) {
-                var cleanedText = $(this).text().split("Timeout: ")[1];
-                $(this).text(cleanedText);
-            }
-        });
-        var optionText = $("option:selected", this).text();
-        $("option:selected", this).text("Timeout: " + optionText);
-    });
 });
 
 $('#browse-question-button,.browse-question-link').on('click', function (e) {
@@ -623,6 +596,12 @@ $(document).on('click', '#post-a-question-window .post-question-submit', functio
                 });
             });
         });
+    }
+});
+
+$(document).on('blur', '#opening-ts-datepicker', function (e) {
+    if (!$('#opening-ts-datepicker').val()) {
+        $('#opening-ts-datepicker').css('background-color', '#4d535a');
     }
 });
 
@@ -1698,7 +1677,7 @@ function update_ranking_data(arr_name, id, val, ord) {
         var win = $(this).closest('.rcbrowser');
         var element = $('<div>');
         element.addClass('input-container input-container--answer-option');
-        var input = '<input type="text" name="editOption0" class="rcbrowser-input answer-option form-item" placeholder="Enter an answer...">';
+        var input = '<input type="text" name="editOption0" class="rcbrowser-input answer-option form-item" placeholder="Enter the option...">';
         element.append(input);
         win.find('.error-container--answer-option').before(element);
         element.addClass('is-bounce');
