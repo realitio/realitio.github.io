@@ -41,6 +41,7 @@ var jazzicon = require('jazzicon');
 
 // Cache the results of a call that checks each arbitrator is set to use the current realitycheck contract
 var verified_arbitrators = {};
+var failed_arbitrators = {};
 
 var submitted_question_id_timestamp = {};
 var user_claimable = {};
@@ -681,6 +682,20 @@ function isArbitratorValid(arb) {
     return found;
 }
 
+// Check if an arbitrator is valid when we have not yet had time to contact all the arbitrator contracts
+// This is used for fast rendering of the warnings on the list page.
+// TODO: We should really go back through them later and set warnings on anything that turned out to be bad
+function isArbitratorValidFast(arb) {
+    if (!arbitrator_list[network_id][arb]) {
+        return false;
+    }
+    // NB This will return a false positive if the arbitrator has not yet been checked when it runs
+    if (failed_arbitrators[arb]) {
+        return false;
+    }
+    return true;
+}
+
 function isArbitrationPending(question) {
     return question[Qi_is_pending_arbitration];
 }
@@ -736,7 +751,7 @@ $(document).on('click', '.answer-claim-button', function () {
         //  2 answers 54947
         //  5 answers 73702
 
-        var gas = 140000 + 20000 * claim_args['history_hashes'].length;
+        var gas = 140000 + 30000 * claim_args['history_hashes'].length;
         rc.claimMultipleAndWithdrawBalance.sendTransaction(claim_args['question_ids'], claim_args['answer_lengths'], claim_args['history_hashes'], claim_args['answerers'], claim_args['bonds'], claim_args['answers'], {
             from: account,
             gas: gas
@@ -1388,9 +1403,9 @@ function updateUserBalanceDisplay() {
     if (!account) {
         return;
     }
-    //console.log('updating balacne for', account);
+    console.log('updating balacne for', account);
     web3js.eth.getBalance(account, function (error, result) {
-        //console.log('got updated balacne for', account, result.toNumber());
+        console.log('got updated balacne for', account, result.toNumber());
         if (error === null) {
             $('.account-balance').text(web3js.fromWei(result.toNumber(), 'ether'));
         }
@@ -1471,7 +1486,7 @@ function populateSection(section_name, question_data, before_item) {
         balloon_html += 'The reward is very low.<br /><br />This means there may not be enough incentive to enter the correct answer and back it up with a bond.<br /><br />';
     }
     var arbitrator_addrs = $('#arbitrator').children();
-    var valid_arbirator = isArbitratorValid(question_data[Qi_arbitrator]);
+    var valid_arbirator = isArbitratorValidFast(question_data[Qi_arbitrator]);
     if (!valid_arbirator) {
         balloon_html += 'This arbitrator is unknown.';
     }
@@ -2034,7 +2049,11 @@ function populateQuestionWindow(rcqa, question_detail, is_refresh) {
         rcqa.find('.answered-history-container').after(ans_frm);
     }
 
-    rcqa.find('.rcbrowser-input--number--bond.form-item').val(web3js.fromWei(bond.toNumber(), 'ether') * 2);
+    // If the user has edited the field, never repopulate it underneath them
+    var bond_field = rcqa.find('.rcbrowser-input--number--bond.form-item');
+    if (!bond_field.hasClass('edited')) {
+        bond_field.val(web3js.fromWei(bond.toNumber(), 'ether') * 2);
+    }
 
     //console.log('call updateQuestionState');
     rcqa = updateQuestionState(question_detail, rcqa);
@@ -2704,7 +2723,14 @@ $(document).on('click', '.post-answer-button', function (e) {
 
     var parent_div = $(this).parents('div.rcbrowser--qa-detail');
     var question_id = parent_div.attr('data-question-id');
-    var bond = web3js.toWei(new BigNumber(parent_div.find('input[name="questionBond"]').val()), 'ether');
+
+    var bond = new BigNumber(0);
+    var bond_field = parent_div.find('input[name="questionBond"]');
+    try {
+        bond = web3js.toWei(new BigNumber(bond_field.val()), 'ether');
+    } catch (err) {
+        console.log('Could not parse bond field value');
+    }
 
     var question, current_answer, new_answer;
     var question_json;
@@ -2796,6 +2822,9 @@ $(document).on('click', '.post-answer-button', function (e) {
         if (is_err) throw 'err on submitting answer';
 
         submitted_question_id_timestamp[question_id] = new Date().getTime();
+
+        // Remove the edited note to allow the field to be automatically populated again
+        bond_field.removeClass('edited');
 
         return rc.submitAnswer.sendTransaction(question_id, new_answer, current_question[Qi_bond], {
             from: account,
@@ -2995,6 +3024,7 @@ $(document).on('keyup', '.rcbrowser-input.rcbrowser-input--number', function (e)
     } else if (!$(this).hasClass('rcbrowser-input--number--answer') && value <= 0) {
         $(this).parent().parent().addClass('is-error');
     } else if ($(this).hasClass('rcbrowser-input--number--bond')) {
+        $(this).addClass('edited');
         var question_id = $(this).closest('.rcbrowser.rcbrowser--qa-detail').attr('data-question-id');
         var current_idx = question_detail_list[question_id]['history'].length - 1;
         var current_bond = new BigNumber(0);
@@ -3106,8 +3136,9 @@ function updateRankingSections(question, changed_field, changed_val) {
                 populateSection('questions-closing-soon', question, insert_before);
             }
         }
-    } else if (changed_field == Qi_bounty) {
-        var insert_before = update_ranking_data('questions-high-reward', question_id, question[Qi_bounty], 'desc');
+    }
+    if (changed_field == Qi_bounty || changed_field == Qi_finalization_ts) {
+        var insert_before = update_ranking_data('questions-high-reward', question_id, question[Qi_bounty].plus(question[Qi_bond]), 'desc');
         //console.log('update for new bounty', question[Qi_bounty], 'insert_before is', insert_before);
         if (insert_before !== -1) {
             populateSection('questions-high-reward', question, insert_before);
@@ -3209,7 +3240,10 @@ function pageInit(account) {
         evts.watch(function (error, result) {
             if (!error && result) {
                 console.log('got watch event', error, result);
-                handleEvent(error, result);
+                // Give the node we're calling some time to catch up
+                window.setTimeout(function () {
+                    handleEvent(error, result);
+                }, 5000);
             }
         });
     });
@@ -3476,6 +3510,12 @@ function populateArbitratorSelect(network_arbs) {
                     console.log('arb has rc addr', rc_addr);
                     var is_arb_valid = rc_addr == myr.address;
                     verified_arbitrators[na_addr] = is_arb_valid;
+                    // For faster loading, we give arbitrators in our list the benefit of the doubt when rendering the page list arbitrator warning
+                    // For this we'll check our original list for the network, then just check against the failed list
+                    // TODO: Once loaded, we should really go back through the page and update anything failed
+                    if (!is_arb_valid) {
+                        failed_arbitrators[na_addr] = true;
+                    }
                     console.log(verified_arbitrators);
                     return is_arb_valid;
                 }).then(function (is_arb_valid) {
@@ -3578,44 +3618,56 @@ window.addEventListener('load', function () {
         });
     });
 
-    web3js.eth.getAccounts(function (err, acc) {
-        web3js.eth.getBlock('latest', function (err, result) {
-            if (result.number > current_block_number) {
-                current_block_number = result.number;
-            }
-
-            if (acc && acc.length > 0) {
-                //console.log('accounts', acc);
-                account = acc[0];
+    web3js.version.getNetwork(function (err, net_id) {
+        if (err === null) {
+            if (valid_ids.indexOf(net_id) === -1) {
+                $('body').addClass('error-invalid-network').addClass('error');
             } else {
-                if (!is_web3_fallback) {
-                    console.log('no accounts');
-                    $('body').addClass('error-no-metamask-accounts').addClass('error');
-                }
+                initializeGlobalVariablesForNetwork(net_id);
             }
+        }
 
-            var args = parseHash();
-            if (args['category']) {
-                category = args['category'];
-                $('body').addClass('category-' + category);
-                var cat_txt = $("#filter-list").find("[data-category='" + category + "']").text();
-                $('#filterby').text(cat_txt);
-            }
-            //console.log('args:', args);
-
-            RealityCheck = contract(rc_json);
-            RealityCheck.setProvider(web3js.currentProvider);
-            RealityCheck.deployed().then(function (instance) {
-                rc = instance;
-                updateUserBalanceDisplay();
-                pageInit(account);
-                if (args['question']) {
-                    //console.log('fetching question');
-                    ensureQuestionDetailFetched(args['question']).then(function (question) {
-                        openQuestionWindow(question[Qi_question_id]);
-                    });
+        web3js.eth.getAccounts(function (err, acc) {
+            web3js.eth.getBlock('latest', function (err, result) {
+                if (result.number > current_block_number) {
+                    current_block_number = result.number;
                 }
+
+                if (acc && acc.length > 0) {
+                    //console.log('accounts', acc);
+                    account = acc[0];
+                    $('.account-balance-link').attr('href', block_explorer + '/address/' + account);
+                } else {
+                    if (!is_web3_fallback) {
+                        console.log('no accounts');
+                        $('body').addClass('error-no-metamask-accounts').addClass('error');
+                    }
+                }
+
+                var args = parseHash();
+                if (args['category']) {
+                    category = args['category'];
+                    $('body').addClass('category-' + category);
+                    var cat_txt = $("#filter-list").find("[data-category='" + category + "']").text();
+                    $('#filterby').text(cat_txt);
+                }
+                //console.log('args:', args);
+
+                RealityCheck = contract(rc_json);
+                RealityCheck.setProvider(web3js.currentProvider);
+                RealityCheck.deployed().then(function (instance) {
+                    rc = instance;
+                    updateUserBalanceDisplay();
+                    pageInit(account);
+                    if (args['question']) {
+                        //console.log('fetching question');
+                        ensureQuestionDetailFetched(args['question']).then(function (question) {
+                            openQuestionWindow(question[Qi_question_id]);
+                        });
+                    }
+                });
             });
+            populateArbitratorSelect(arbitrator_list[net_id]);
         });
     });
 
@@ -3638,18 +3690,6 @@ window.addEventListener('load', function () {
     }
 
     //setTimeout(bounceEffect, 8000);
-
-
-    web3js.version.getNetwork(function (err, net_id) {
-        if (err === null) {
-            if (valid_ids.indexOf(net_id) === -1) {
-                $('body').addClass('error-invalid-network').addClass('error');
-            } else {
-                initializeGlobalVariablesForNetwork(net_id);
-                populateArbitratorSelect(arbitrator_list[net_id]);
-            }
-        }
-    });
 });
 
 },{"@realitio/realitio-contracts/config/arbitrators.json":2,"@realitio/realitio-contracts/config/templates.json":3,"@realitio/realitio-contracts/truffle/build/contracts/Arbitrator.json":4,"@realitio/realitio-contracts/truffle/build/contracts/RealityCheck.json":5,"@realitio/realitio-lib/formatters/question.js":6,"@realitio/realitio-lib/formatters/template.js":7,"bignumber.js":29,"imagesloaded":168,"interactjs":171,"jazzicon":176,"jquery-browserify":178,"jquery-datepicker":179,"jquery-expander":180,"perfect-scrollbar":201,"timeago.js":275,"truffle-contract":336,"web3":393}],2:[function(require,module,exports){
