@@ -1404,9 +1404,9 @@ function updateUserBalanceDisplay() {
     if (!account) {
         return;
     }
-    console.log('updating balacne for', account);
+    // console.log('updating balacne for', account);
     web3js.eth.getBalance(account, function (error, result) {
-        console.log('got updated balacne for', account, result.toNumber());
+        // console.log('got updated balacne for', account, result.toNumber());
         if (error === null) {
             $('.account-balance').text(web3js.fromWei(result.toNumber(), 'ether'));
         }
@@ -2132,23 +2132,23 @@ function possibleClaimableItems(question_detail) {
             // Somebody takes over your answer
             if (answerer != account && final_answer == answer) {
                 is_yours = false;
-                console.log(ttl.toString(), 'minus', bond.toString());
+                //console.log(ttl.toString(), 'minus', bond.toString());
                 ttl = ttl.minus(bond); // pay them their bond
             } else {
-                console.log(ttl.toString(), 'plus', bond.toString());
+                //console.log(ttl.toString(), 'plus', bond.toString());
                 ttl = ttl.plus(bond); // take their bond
             }
         } else {
             // You take over someone else's answer
             if (answerer == account && final_answer == answer) {
                 is_yours = true;
-                console.log(ttl.toString(), 'plus', bond.toString());
+                //console.log(ttl.toString(), 'plus', bond.toString());
                 ttl = ttl.plus(bond); // your bond back
             }
         }
         if (is_first && is_yours) {
-            console.log('adding your bounty');
-            console.log(ttl.toString(), 'plus', question_detail[Qi_bounty].toString());
+            //console.log('adding your bounty');
+            //console.log(ttl.toString(), 'plus', question_detail[Qi_bounty].toString());
             ttl = ttl.plus(question_detail[Qi_bounty]);
         }
 
@@ -3281,22 +3281,22 @@ function fetchAndDisplayQuestions(end_block, fetch_i) {
         //look at current sections and update blockchain scanning message to
         //no questions found if no items exist
 
-        if ($("#questions-latest .questions-list > *").length == 3) {
+        if ($("#questions-latest .questions-list > *").length < 1) {
             $('#questions-latest').find('.no-questions-category').css('display', 'block');
             $('#questions-latest').find('.scanning-questions-category').css('display', 'none');
         }
 
-        if ($("#questions-closing-soon .questions-list > *").length == 3) {
+        if ($("#questions-closing-soon .questions-list > *").length < 1) {
             $('#questions-closing-soon').find('.no-questions-category').css('display', 'block');
             $('#questions-closing-soon').find('.scanning-questions-category').css('display', 'none');
         }
 
-        if ($("#questions-high-reward .questions-list > *").length == 3) {
+        if ($("#questions-high-reward .questions-list > *").length < 1) {
             $('#questions-high-reward').find('.no-questions-category').css('display', 'block');
             $('#questions-high-reward').find('.scanning-questions-category').css('display', 'none');
         }
 
-        if ($("#questions-resolved .questions-list > *").length == 3) {
+        if ($("#questions-resolved .questions-list > *").length < 1) {
             $('#questions-resolved').find('.no-questions-category').css('display', 'block');
             $('#questions-resolved').find('.scanning-questions-category').css('display', 'none');
         }
