@@ -2339,6 +2339,12 @@ select[name="arbitrator"] {
   text-align: right;
   color: #939596; }
 
+select[name="arbitrator"] > option {
+  color: #333333; }
+
+select[name="question-category"] > option {
+  color: #333333; }
+
 select[name="question-category"].selected,
 select[name="arbitrator"].selected {
   color: #333333; }
@@ -3190,6 +3196,11 @@ input.arbitrator-other {
   font-size: 14px;
   display: none;
   margin: 12px 0; }
+
+div.arbitrator-tos {
+  display: none;
+  font-size: 12px;
+  padding: 8px; }
 
 div#ui-datepicker-div {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2) !important;

@@ -1939,6 +1939,14 @@ select[name="arbitrator"] {
     color: $light-gray;
 }
 
+select[name="arbitrator"] > option {
+    color: $dark;
+}
+
+select[name="question-category"] > option {
+    color: $dark;
+}
+
 select[name="question-category"].selected,
 select[name="arbitrator"].selected {    
     color: $dark;
@@ -2669,6 +2677,12 @@ input.arbitrator-other {
     font-size:14px;
     display:none;
     margin: 12px 0;
+}
+
+div.arbitrator-tos {
+    display:none;
+    font-size:12px;
+    padding:8px;
 }
 
 div#ui-datepicker-div {
