@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using the Realitio dapp &mdash; Realitio  documentation</title>
+  <title>Using the Reality Check dapp &mdash; Reality Check  documentation</title>
   
 
   
@@ -35,9 +35,9 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Realitio  documentation" href="index.html"/>
-        <link rel="next" title="Using Realitio from a contract" href="contracts.html"/>
-        <link rel="prev" title="Realitio" href="index.html"/> 
+    <link rel="top" title="Reality Check  documentation" href="index.html"/>
+        <link rel="next" title="Using Reality Check from a contract" href="contracts.html"/>
+        <link rel="prev" title="Reality Check" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -56,7 +56,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Realitio
+            <a href="index.html" class="icon icon-home"> Reality Check
           
 
           
@@ -88,7 +88,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Using the Realitio dapp</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using the Reality Check dapp</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#asking-a-question">Asking a question</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#opening-date">Opening Date</a></li>
@@ -109,14 +109,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#withdrawing-funds">Withdrawing funds</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Using Realitio from a contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Using Reality Check from a contract</a></li>
 <li class="toctree-l1"><a class="reference internal" href="encoding.html">How data is encoded</a></li>
 <li class="toctree-l1"><a class="reference internal" href="availability.html">Unavailability and null responses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="arbitrators.html">Arbitrators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fees.html">Fees and payments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="whitepaper.html">White paper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contract_explanation.html">Contract Internals</a></li>
-<li class="toctree-l1"><a class="reference internal" href="audit.html">Audit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audit.html">Reality Check Audit</a></li>
 </ul>
 
             
@@ -131,7 +131,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Realitio</a>
+          <a href="index.html">Reality Check</a>
         
       </nav>
 
@@ -161,7 +161,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Using the Realitio dapp</li>
+      <li>Using the Reality Check dapp</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -180,12 +180,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="using-the-realitio-dapp">
-<h1>Using the Realitio dapp<a class="headerlink" href="#using-the-realitio-dapp" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="using-the-reality-check-dapp">
+<h1>Using the Reality Check dapp<a class="headerlink" href="#using-the-reality-check-dapp" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <p>You will need the <a class="reference external" href="http://metamask.io/">Metamask</a> Chrome extension.</p>
-<p>Realitio is currently deployed to the Rinkeby testnet. Select the Rinkeby testnet, make sure your account is unlocked and refresh the page.</p>
+<p>Reality Check is currently deployed to the Rinkeby testnet. Select the Rinkeby testnet, make sure your account is unlocked and refresh the page.</p>
 <p>You will need Rinkeby testnet coins to use the application. You can get these at the <a class="reference external" href="https://faucet.rinkeby.io/">Rinkeby Faucet</a>.</p>
 </div>
 <div class="section" id="asking-a-question">
@@ -204,12 +204,13 @@
 <h3>Question Type<a class="headerlink" href="#question-type" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Binary (Yes/No): A simple yes or no answer. Note that this has no value for “null” or “undecided”. If you want to be able to report these options, you may prefer a multi-choice question.</li>
-<li>Number: A positive (unsigned) number. By default questions allow up to 13 decimals.</li>
+<li>Number (positive): A positive (unsigned) number. By default questions allow up to 13 decimals.</li>
+<li>Number (positive/negative): A positive or negative (signed) number. By default questions allow up to 13 decimals.</li>
 <li>Single-choice: One answer can be selected from a list. The answer form will display this as a select box.</li>
 <li>Multiple-choice: Multiple answers can be selected from a list. The answer form will display this as a group of checkboxes.</li>
 <li>Datetime: A date or date and time. The answer form will display this as a date picker.</li>
 </ul>
-<p>See <a class="reference internal" href="contracts.html"><span class="doc">Using Realitio from a contract</span></a> for how these values will be reported to contracts.</p>
+<p>See <a class="reference internal" href="contracts.html"><span class="doc">Using Reality Check from a contract</span></a> for how these values will be reported to contracts.</p>
 </div>
 <div class="section" id="arbitrator">
 <h3>Arbitrator<a class="headerlink" href="#arbitrator" title="Permalink to this headline">¶</a></h3>
@@ -283,10 +284,10 @@ This will cause your transaction to fail.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="contracts.html" class="btn btn-neutral float-right" title="Using Realitio from a contract" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="contracts.html" class="btn btn-neutral float-right" title="Using Reality Check from a contract" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Realitio" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="Reality Check" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

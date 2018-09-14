@@ -20,18 +20,18 @@
       "type": "function"
     }
   ],
-  "bytecode": "0x60606040523415600e57600080fd5b60878061001c6000396000f300606060405260043610603e5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631d7dbb4381146043575b600080fd5b3415604d57600080fd5b6059600435602435603e565b0000a165627a7a72305820b5b6cc0bcad0773b0b10d1e5e4eb9594e6e000dc6bd1af5dc1aee7201bc92b330029",
-  "deployedBytecode": "0x606060405260043610603e5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631d7dbb4381146043575b600080fd5b3415604d57600080fd5b6059600435602435603e565b0000a165627a7a72305820b5b6cc0bcad0773b0b10d1e5e4eb9594e6e000dc6bd1af5dc1aee7201bc92b330029",
+  "bytecode": "0x60606040523415600e57600080fd5b60878061001c6000396000f300606060405260043610603e5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631d7dbb4381146043575b600080fd5b3415604d57600080fd5b6059600435602435603e565b0000a165627a7a723058206ad4446152702ad77f04a2c2638b14e753096bf37cddb3215cd171c811721fd80029",
+  "deployedBytecode": "0x606060405260043610603e5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631d7dbb4381146043575b600080fd5b3415604d57600080fd5b6059600435602435603e565b0000a165627a7a723058206ad4446152702ad77f04a2c2638b14e753096bf37cddb3215cd171c811721fd80029",
   "sourceMap": "25:144:4:-;;;;;;;;;;;;;;;;;",
   "deployedSourceMap": "25:144:4:-;;;;;;;;;;;;;;;;;;;;;;;65:101;;;;;;;;;;;;;;;;;",
   "source": "pragma solidity ^0.4.6;\n\ncontract ExplodingCallbackClient {\n\n    function __realitycheck_callback(bytes32 question_id, bytes32 question_answer) {\n        throw;\n    }\n\n}\n",
-  "sourcePath": "/var/www/html/dev/truffle/contracts/ExplodingCallbackClient.sol",
+  "sourcePath": "/var/www/html/live/truffle/contracts/ExplodingCallbackClient.sol",
   "ast": {
     "attributes": {
-      "absolutePath": "/var/www/html/dev/truffle/contracts/ExplodingCallbackClient.sol",
+      "absolutePath": "/var/www/html/live/truffle/contracts/ExplodingCallbackClient.sol",
       "exportedSymbols": {
         "ExplodingCallbackClient": [
-          637
+          634
         ]
       }
     },
@@ -45,7 +45,7 @@
             ".6"
           ]
         },
-        "id": 627,
+        "id": 624,
         "name": "PragmaDirective",
         "src": "0:23:4"
       },
@@ -61,10 +61,10 @@
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            637
+            634
           ],
           "name": "ExplodingCallbackClient",
-          "scope": 638
+          "scope": 635
         },
         "children": [
           {
@@ -77,7 +77,7 @@
               ],
               "name": "__realitycheck_callback",
               "payable": false,
-              "scope": 637,
+              "scope": 634,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -89,7 +89,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "question_id",
-                      "scope": 636,
+                      "scope": 633,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bytes32",
@@ -102,12 +102,12 @@
                           "name": "bytes32",
                           "type": "bytes32"
                         },
-                        "id": 628,
+                        "id": 625,
                         "name": "ElementaryTypeName",
                         "src": "98:7:4"
                       }
                     ],
-                    "id": 629,
+                    "id": 626,
                     "name": "VariableDeclaration",
                     "src": "98:19:4"
                   },
@@ -115,7 +115,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "question_answer",
-                      "scope": 636,
+                      "scope": 633,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bytes32",
@@ -128,17 +128,17 @@
                           "name": "bytes32",
                           "type": "bytes32"
                         },
-                        "id": 630,
+                        "id": 627,
                         "name": "ElementaryTypeName",
                         "src": "119:7:4"
                       }
                     ],
-                    "id": 631,
+                    "id": 628,
                     "name": "VariableDeclaration",
                     "src": "119:23:4"
                   }
                 ],
-                "id": 632,
+                "id": 629,
                 "name": "ParameterList",
                 "src": "97:46:4"
               },
@@ -149,7 +149,7 @@
                   ]
                 },
                 "children": [],
-                "id": 633,
+                "id": 630,
                 "name": "ParameterList",
                 "src": "144:0:4"
               },
@@ -157,27 +157,27 @@
                 "children": [
                   {
                     "children": [],
-                    "id": 634,
+                    "id": 631,
                     "name": "Throw",
                     "src": "154:5:4"
                   }
                 ],
-                "id": 635,
+                "id": 632,
                 "name": "Block",
                 "src": "144:22:4"
               }
             ],
-            "id": 636,
+            "id": 633,
             "name": "FunctionDefinition",
             "src": "65:101:4"
           }
         ],
-        "id": 637,
+        "id": 634,
         "name": "ContractDefinition",
         "src": "25:144:4"
       }
     ],
-    "id": 638,
+    "id": 635,
     "name": "SourceUnit",
     "src": "0:170:4"
   },
@@ -187,5 +187,5 @@
   },
   "networks": {},
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-07-09T01:47:31.207Z"
+  "updatedAt": "2018-05-09T01:40:46.182Z"
 }
