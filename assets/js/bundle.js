@@ -1681,8 +1681,6 @@ function populateSection(section_name, question_data, before_item) {
         $('div[data-question-id=' + question_id + ']').find('.question-setting-warning').css('z-index', 5);
         $('div[data-question-id=' + question_id + ']').find('.question-setting-warning').find('.balloon').html(balloon_html);
     }
-
-    window.setTimeout(reflectDisplayEntryChanges, 1000);
 }
 
 function updateSectionEntryDisplay(question) {
@@ -3569,7 +3567,6 @@ function pageInit(account) {
 
 function reflectDisplayEntryChanges() {
     if (!is_initial_load_done) {
-        console.log('initial load not done, skipping reflectDisplayEntryChanges');
         return;
     }
     //console.log('checking display_entries', display_entries);
@@ -3580,13 +3577,13 @@ function reflectDisplayEntryChanges() {
     for (var i = 0; i < detypes.length; i++) {
         var detype = detypes[i];
         if (display_entries[detype].ids.length == 0) {
-            console.log('showing no-questions-category', detype);
+            //console.log('showing no-questions-category', detype);
             //console.log('ids is', display_entries[detype].ids);
             //console.log('ids length is', display_entries[detype].ids.length);
             $('#' + detype).find('.no-questions-category').css('display', 'block');
             $('#' + detype).find('.scanning-questions-category').css('display', 'none');
         } else {
-            console.log('did not show no-questions-category', detype);
+            //console.log('did not show no-questions-category', detype);
         }
     }
 }
