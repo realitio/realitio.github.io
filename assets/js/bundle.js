@@ -63,6 +63,7 @@ var template_blocks = {};
 var template_content = TEMPLATE_CONFIG.content;
 
 var last_polled_block;
+var is_initial_load_done = false;
 
 var QUESTION_TYPE_TEMPLATES = TEMPLATE_CONFIG.base_ids;
 var USE_COMMIT_REVEAL = false;
@@ -1680,6 +1681,8 @@ function populateSection(section_name, question_data, before_item) {
         $('div[data-question-id=' + question_id + ']').find('.question-setting-warning').css('z-index', 5);
         $('div[data-question-id=' + question_id + ']').find('.question-setting-warning').find('.balloon').html(balloon_html);
     }
+
+    window.setTimeout(reflectDisplayEntryChanges, 1000);
 }
 
 function updateSectionEntryDisplay(question) {
@@ -3564,6 +3567,30 @@ function pageInit(account) {
     fetchAndDisplayQuestions(current_block_number, 0);
 };
 
+function reflectDisplayEntryChanges() {
+    if (!is_initial_load_done) {
+        console.log('initial load not done, skipping reflectDisplayEntryChanges');
+        return;
+    }
+    //console.log('checking display_entries', display_entries);
+    //look at current sections and update blockchain scanning message to
+    //no questions found if no items exist
+    var detypes = Object.keys(display_entries);
+    //console.log('no questions cateogry, display_entries for detype', display_entries, detype);
+    for (var i = 0; i < detypes.length; i++) {
+        var detype = detypes[i];
+        if (display_entries[detype].ids.length == 0) {
+            console.log('showing no-questions-category', detype);
+            //console.log('ids is', display_entries[detype].ids);
+            //console.log('ids length is', display_entries[detype].ids.length);
+            $('#' + detype).find('.no-questions-category').css('display', 'block');
+            $('#' + detype).find('.scanning-questions-category').css('display', 'none');
+        } else {
+            console.log('did not show no-questions-category', detype);
+        }
+    }
+}
+
 function fetchAndDisplayQuestions(end_block, fetch_i) {
 
     // get how many to fetch off fetch_numbers, until we run off the end then use the last num
@@ -3582,16 +3609,8 @@ function fetchAndDisplayQuestions(end_block, fetch_i) {
 
         console.log('History read complete back to block', START_BLOCK);
 
-        //look at current sections and update blockchain scanning message to
-        //no questions found if no items exist
-        var detypes = Object.keys(display_entries);
-        for (var i = 0; i < detypes.length; i++) {
-            var detype = detypes[i];
-            if (display_entries[detype].ids.length == 0) {
-                $('#' + detype).find('.no-questions-category').css('display', 'block');
-                $('#' + detype).find('.scanning-questions-category').css('display', 'none');
-            }
-        }
+        is_initial_load_done = true;
+        window.setTimeout(reflectDisplayEntryChanges, 1000);
 
         scheduleFallbackTimer();
         runPollingLoop(rc);
@@ -4026,6 +4045,9 @@ module.exports={
   },
   "1337": {
     "0x0": "Realitio Team (dev)"
+  },
+  "123411710": {
+    "0x91fe095b919aca8e8abd125c9326e3aaf1e645c8": "Dev arbitrator (Ganache)"
   }
 }
 
@@ -8213,8 +8235,12 @@ module.exports={
       "events": {},
       "links": {},
       "address": "0xdcdede29a2b83176ab478dc0f9b08b7c01ac5f58"
+    },
+    "123411710": {
+      "events": {},
+      "links": {},
+      "address": "0x91fe095b919aca8e8abd125c9326e3aaf1e645c8"
     }
-
   },
   "schemaVersion": "1.0.1",
   "updatedAt": "2018-07-09T01:50:16.867Z"
@@ -34313,6 +34339,11 @@ module.exports={
       "events": {},
       "links": {},
       "address": "0xac870cdc25a87f12a5533704d047138d098812b8"
+    },
+    "123411710": {
+      "events": {},
+      "links": {},
+      "address": "0xf0e80d44cd69c846c756a35d0534bcefc15fa388"
     }
   },
   "schemaVersion": "1.0.1",
@@ -52072,8 +52103,6 @@ module.exports = function (fromModel) {
 
 
 },{"./conversions":69}],72:[function(require,module,exports){
-'use strict'
-
 module.exports = {
 	"aliceblue": [240, 248, 255],
 	"antiquewhite": [250, 235, 215],
@@ -52224,7 +52253,6 @@ module.exports = {
 	"yellow": [255, 255, 0],
 	"yellowgreen": [154, 205, 50]
 };
-
 },{}],73:[function(require,module,exports){
 /* MIT license */
 var colorNames = require('color-name');
@@ -61787,10 +61815,10 @@ EdwardsCurve.prototype.pointFromY = function pointFromY(y, odd) {
   if (!y.red)
     y = y.toRed(this.red);
 
-  // x^2 = (y^2 - c^2) / (c^2 d y^2 - a)
+  // x^2 = (y^2 - 1) / (d y^2 + 1)
   var y2 = y.redSqr();
-  var lhs = y2.redSub(this.c2);
-  var rhs = y2.redMul(this.d).redMul(this.c2).redSub(this.a);
+  var lhs = y2.redSub(this.one);
+  var rhs = y2.redMul(this.d).redAdd(this.one);
   var x2 = lhs.redMul(rhs.redInvm());
 
   if (x2.cmp(this.zero) === 0) {
@@ -61804,7 +61832,7 @@ EdwardsCurve.prototype.pointFromY = function pointFromY(y, odd) {
   if (x.redSqr().redSub(x2).cmp(this.zero) !== 0)
     throw new Error('invalid point');
 
-  if (x.fromRed().isOdd() !== odd)
+  if (x.isOdd() !== odd)
     x = x.redNeg();
 
   return this.point(x, y);
@@ -61881,8 +61909,7 @@ Point.prototype.inspect = function inspect() {
 Point.prototype.isInfinity = function isInfinity() {
   // XXX This code assumes that zero is always zero in red
   return this.x.cmpn(0) === 0 &&
-    (this.y.cmp(this.z) === 0 ||
-    (this.zOne && this.y.cmp(this.curve.c) === 0));
+         this.y.cmp(this.z) === 0;
 };
 
 Point.prototype._extDbl = function _extDbl() {
@@ -61963,7 +61990,7 @@ Point.prototype._projDbl = function _projDbl() {
     // E = C + D
     var e = c.redAdd(d);
     // H = (c * Z1)^2
-    var h = this.curve._mulC(this.z).redSqr();
+    var h = this.curve._mulC(this.c.redMul(this.z)).redSqr();
     // J = E - 2 * H
     var j = e.redSub(h).redSub(h);
     // X3 = c * (B - E) * J
@@ -62139,6 +62166,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
     if (this.x.cmp(rx) === 0)
       return true;
   }
+  return false;
 };
 
 // Compatibility with BaseCurve
@@ -63261,6 +63289,7 @@ JPoint.prototype.eqXToP = function eqXToP(x) {
     if (this.x.cmp(rx) === 0)
       return true;
   }
+  return false;
 };
 
 JPoint.prototype.inspect = function inspect() {
@@ -65186,23 +65215,23 @@ module.exports={
         "spec": ">=6.2.3 <7.0.0",
         "type": "range"
       },
-      "/var/www/html/live/node_modules/secp256k1"
+      "/var/www/html/dev/node_modules/secp256k1"
     ]
   ],
   "_from": "elliptic@>=6.2.3 <7.0.0",
-  "_id": "elliptic@6.4.1",
+  "_id": "elliptic@6.4.0",
   "_inCache": true,
   "_location": "/elliptic",
-  "_nodeVersion": "10.5.0",
+  "_nodeVersion": "7.0.0",
   "_npmOperationalInternal": {
-    "host": "s3://npm-registry-packages",
-    "tmp": "tmp/elliptic_6.4.1_1533787091502_0.6309761823717674"
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/elliptic-6.4.0.tgz_1487798866428_0.30510620190761983"
   },
   "_npmUser": {
     "name": "indutny",
     "email": "fedor@indutny.com"
   },
-  "_npmVersion": "6.3.0",
+  "_npmVersion": "3.10.8",
   "_phantomChildren": {},
   "_requested": {
     "raw": "elliptic@^6.2.3",
@@ -65218,11 +65247,11 @@ module.exports={
     "/create-ecdh",
     "/secp256k1"
   ],
-  "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
-  "_shasum": "c2d0b7776911b86722c632c3c06c60f2f819939a",
+  "_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.0.tgz",
+  "_shasum": "cac9af8762c85836187003c8dfe193e5e2eae5df",
   "_shrinkwrap": null,
   "_spec": "elliptic@^6.2.3",
-  "_where": "/var/www/html/live/node_modules/secp256k1",
+  "_where": "/var/www/html/dev/node_modules/secp256k1",
   "author": {
     "name": "Fedor Indutny",
     "email": "fedor@indutny.com"
@@ -65258,17 +65287,13 @@ module.exports={
   },
   "directories": {},
   "dist": {
-    "integrity": "sha512-BsXLz5sqX8OHcsh7CqBMztyXARmGQ3LWPtGjJi6DiJHq5C/qvi9P3OqgswKSDftbu8+IoI/QDTAm2fFnQ9SZSQ==",
-    "shasum": "c2d0b7776911b86722c632c3c06c60f2f819939a",
-    "tarball": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz",
-    "fileCount": 17,
-    "unpackedSize": 118371,
-    "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJba7vUCRA9TVsSAnZWagAA+gcP/jWaj5GmDZ0YFi/X4g5O\nx+pxu9i3HbP9YqywT7rz3XFXSaytu0LQDeDEbddl523X69tsbKfzHRTcnW8n\n2r0VjPhttRm+0RpEhBwjSIK34VkQA1xIWh2ugOToKXVCFVLM5VFDPGzbiN6x\n/hpL7gj1hoCRVmuhjnqFQ+vPKACKfv1Eq4CsRmu2focmP37kQpWQlweD/z4V\nJF4NxA33Fvp13Fl+9g4sPHyhUVsW9ojVaG3Ijn70pCaGQM18UPlbODkWQ1QX\nAgteOFjkIOtcalJk3B3qsM8GZeHEcAFvt2T73miJkHdCGNmRQS45Ede+gnj0\nlLlZJsCCKUHtTqrlprHo6AgMnBZufmytyozYAHC1/JYniazSBi2yPHtQeniR\nl69BfiRBdD2rNrMPwmCNRkMqrgel5WMGpaD0xdaFAHF1Ru2ZQFKsA7KvPGgp\nA20+LN11cCib67Pg5XDyrZ92T3yXec+6gQ3iq9d9UBZKFGl0P8ebVqq1LrUJ\na6nekwMpRISWnKcqV72XVmQdBmUWHq9VfVLsWJzVIJqtpHmUO7q74ACP3i4W\n0/F1REeI0YEhh3NjeStdDecfjlu7PY0pLQpbk2I3ms+6DO+cAfeDEev5jFBK\nwQabRNhITeT1FVtxZAcApj33fnCdqwaWr1NS00K5ZRqhDTTzPr/O4KRN4CR1\npstU\r\n=UVBB\r\n-----END PGP SIGNATURE-----\r\n"
+    "shasum": "cac9af8762c85836187003c8dfe193e5e2eae5df",
+    "tarball": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.0.tgz"
   },
   "files": [
     "lib"
   ],
-  "gitHead": "523da1cf71ddcfd607fbdee1858bc2af47f0e700",
+  "gitHead": "6b0d2b76caae91471649c8e21f0b1d3ba0f96090",
   "homepage": "https://github.com/indutny/elliptic",
   "keywords": [
     "EC",
@@ -65299,7 +65324,7 @@ module.exports={
     "unit": "istanbul test _mocha --reporter=spec test/index.js",
     "version": "grunt dist && git add dist/"
   },
-  "version": "6.4.1"
+  "version": "6.4.0"
 }
 
 },{}],143:[function(require,module,exports){
@@ -111957,7 +111982,7 @@ module.exports={
         "spec": ">=0.0.5 <0.0.6",
         "type": "range"
       },
-      "/var/www/html/live/node_modules/truffle-contract"
+      "/var/www/html/dev/node_modules/truffle-contract"
     ]
   ],
   "_from": "truffle-contract-schema@>=0.0.5 <0.0.6",
@@ -111991,7 +112016,7 @@ module.exports={
   "_shasum": "5e9d20bd0bf2a27fe94310748249d484eee49961",
   "_shrinkwrap": null,
   "_spec": "truffle-contract-schema@^0.0.5",
-  "_where": "/var/www/html/live/node_modules/truffle-contract",
+  "_where": "/var/www/html/dev/node_modules/truffle-contract",
   "author": {
     "name": "Tim Coulter",
     "email": "tim.coulter@consensys.net"

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using Reality Check from a contract &mdash; Reality Check  documentation</title>
+  <title>Using Realitio from a contract &mdash; Realitio  documentation</title>
   
 
   
@@ -35,9 +35,9 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Reality Check  documentation" href="index.html"/>
+    <link rel="top" title="Realitio  documentation" href="index.html"/>
         <link rel="next" title="How data is encoded" href="encoding.html"/>
-        <link rel="prev" title="Using the Reality Check dapp" href="dapp.html"/> 
+        <link rel="prev" title="Using the Realitio dapp" href="dapp.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -56,7 +56,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Reality Check
+            <a href="index.html" class="icon icon-home"> Realitio
           
 
           
@@ -88,8 +88,8 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="dapp.html">Using the Reality Check dapp</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Using Reality Check from a contract</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="dapp.html">Using the Realitio dapp</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using Realitio from a contract</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#fetching-information">Fetching information</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#fetching-the-answer-to-a-particular-question">Fetching the answer to a particular question</a></li>
 </ul>
@@ -108,7 +108,7 @@
 <li class="toctree-l1"><a class="reference internal" href="fees.html">Fees and payments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="whitepaper.html">White paper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contract_explanation.html">Contract Internals</a></li>
-<li class="toctree-l1"><a class="reference internal" href="audit.html">Reality Check Audit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audit.html">Audit</a></li>
 </ul>
 
             
@@ -123,7 +123,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Reality Check</a>
+          <a href="index.html">Realitio</a>
         
       </nav>
 
@@ -153,7 +153,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Using Reality Check from a contract</li>
+      <li>Using Realitio from a contract</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -172,11 +172,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="using-reality-check-from-a-contract">
-<h1>Using Reality Check from a contract<a class="headerlink" href="#using-reality-check-from-a-contract" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="using-realitio-from-a-contract">
+<h1>Using Realitio from a contract<a class="headerlink" href="#using-realitio-from-a-contract" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="fetching-information">
 <h2>Fetching information<a class="headerlink" href="#fetching-information" title="Permalink to this headline">¶</a></h2>
-<p>The simplest way use for Reality Check is to fetch some information for a question that has already been posted using the DApp.</p>
+<p>The simplest way use for Realitio is to fetch some information for a question that has already been posted using the DApp.</p>
 <p>Hovering your mouse over the “…” mark in the upper right-hand corner of a question will show you the question ID and the hash of the question content.</p>
 <div class="section" id="fetching-the-answer-to-a-particular-question">
 <h3>Fetching the answer to a particular question<a class="headerlink" href="#fetching-the-answer-to-a-particular-question" title="Permalink to this headline">¶</a></h3>
@@ -188,7 +188,7 @@
 </td></tr></table></div>
 <p>This will return <code class="docutils literal"><span class="pre">bytes32</span></code> data, or throw an error (<code class="docutils literal"><span class="pre">revert</span></code>) if the question does not exist or has not been finalized.</p>
 <p>A (yes/no) question would normally be cast to a <code class="docutils literal"><span class="pre">uint256</span></code> type, resulting in <code class="docutils literal"><span class="pre">1</span></code> or <code class="docutils literal"><span class="pre">0</span></code>.</p>
-<p>If you want numerical data, you will usually cast the result to either <code class="docutils literal"><span class="pre">uint256</span></code> or <code class="docutils literal"><span class="pre">int256</span></code>.</p>
+<p>If you want numerical data, you will usually cast the result to <code class="docutils literal"><span class="pre">uint256</span></code>.</p>
 <p>A single choice from a list of options will return an ID representing a zero-based index.</p>
 <dl class="docutils">
 <dt>Who won the US presidential election?</dt>
@@ -240,6 +240,7 @@
 <p>If the arbitrator you have selected charges a per-question fee, you must supply at least this much ETH. Any additonal ETH you send with this call will be assigned as a reward to whoever supplies the final answer to the question. See <a class="reference internal" href="fees.html"><span class="doc">Fees and payments</span></a> for more information.</p>
 <p>The <code class="docutils literal"><span class="pre">bytes32</span></code> ID that will be returned is made by hashing the parameters, plus <code class="docutils literal"><span class="pre">msg.sender</span></code>.</p>
 <p>The <code class="docutils literal"><span class="pre">nonce</span></code> is a user-supplied number that can be used to disambiguated deliberate repeated uses of the same question. You can use <code class="docutils literal"><span class="pre">0</span></code> if you never intend to ask the same question with the same settings twice.</p>
+<p>The <code class="docutils literal"><span class="pre">timeout</span></code> is the time in seconds the question will have after adding an answer before it is automatically finalized. It would typically be around <code class="docutils literal"><span class="pre">1</span> <span class="pre">days</span></code>. The contract sanity-checks set the maximum possible value at <code class="docutils literal"><span class="pre">365</span> <span class="pre">days</span></code>.</p>
 <div class="section" id="accepting-an-answer-only-if-something-has-happened">
 <h3>Accepting an answer only if something has happened<a class="headerlink" href="#accepting-an-answer-only-if-something-has-happened" title="Permalink to this headline">¶</a></h3>
 <p>Once a question has been created and the opening date (if set) reached, it can be answered immediately.</p>
@@ -287,8 +288,8 @@
 </div>
 <div class="section" id="making-sure-a-question-has-an-answer">
 <h2>Making sure a question has an answer<a class="headerlink" href="#making-sure-a-question-has-an-answer" title="Permalink to this headline">¶</a></h2>
-<p>As discussed in <a class="reference internal" href="availability.html"><span class="doc">Unavailability and null responses</span></a>, when a question is asked, the answer may be “don’t know” or “don’t understand” or “this isn’t settled yet”. Contracts relying on Reality Check for information need to be designed to take account of this possibility.</p>
-<p>After settlement Reality Check will preserve information about the <code class="docutils literal"><span class="pre">content_hash</span></code>, <code class="docutils literal"><span class="pre">arbitrator</span></code>, <code class="docutils literal"><span class="pre">timeout</span></code>, <code class="docutils literal"><span class="pre">finalization_ts</span></code> (finalization timestamp) and highest-posted <code class="docutils literal"><span class="pre">bond</span></code>. Contracts can either check this information directly or pass their requirements to <code class="docutils literal"><span class="pre">getFinalAnswerIfMatches()</span></code>.</p>
+<p>As discussed in <a class="reference internal" href="availability.html"><span class="doc">Unavailability and null responses</span></a>, when a question is asked, the answer may be “don’t know” or “don’t understand” or “this isn’t settled yet”. Contracts relying on Realitio for information need to be designed to take account of this possibility.</p>
+<p>After settlement Realitio will preserve information about the <code class="docutils literal"><span class="pre">content_hash</span></code>, <code class="docutils literal"><span class="pre">arbitrator</span></code>, <code class="docutils literal"><span class="pre">timeout</span></code>, <code class="docutils literal"><span class="pre">finalization_ts</span></code> (finalization timestamp) and highest-posted <code class="docutils literal"><span class="pre">bond</span></code>. Contracts can either check this information directly or pass their requirements to <code class="docutils literal"><span class="pre">getFinalAnswerIfMatches()</span></code>.</p>
 </div>
 </div>
 
@@ -305,7 +306,7 @@
         <a href="encoding.html" class="btn btn-neutral float-right" title="How data is encoded" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="dapp.html" class="btn btn-neutral" title="Using the Reality Check dapp" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="dapp.html" class="btn btn-neutral" title="Using the Realitio dapp" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

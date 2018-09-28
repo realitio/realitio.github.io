@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Reality Check Audit &mdash; Reality Check  documentation</title>
+  <title>Audit &mdash; Realitio  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Reality Check  documentation" href="index.html"/>
+    <link rel="top" title="Realitio  documentation" href="index.html"/>
         <link rel="prev" title="Contract Internals" href="contract_explanation.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Reality Check
+            <a href="index.html" class="icon icon-home"> Realitio
           
 
           
@@ -87,19 +87,19 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="dapp.html">Using the Reality Check dapp</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Using Reality Check from a contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dapp.html">Using the Realitio dapp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Using Realitio from a contract</a></li>
 <li class="toctree-l1"><a class="reference internal" href="encoding.html">How data is encoded</a></li>
 <li class="toctree-l1"><a class="reference internal" href="availability.html">Unavailability and null responses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="arbitrators.html">Arbitrators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fees.html">Fees and payments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="whitepaper.html">White paper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contract_explanation.html">Contract Internals</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Reality Check Audit</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Audit</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#methodology">Methodology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#general-observations">General observations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#scope-of-the-audit">Scope of the Audit</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#audit">Audit</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id3">Audit</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#first-pass">First Pass</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#l413-minor-bondmustbezero-is-always-true">L413 MINOR bondMustBeZero is always true</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#l478-minor-improvement-clarify-current-winning-with-each-answer-given">L478 MINOR Improvement: clarify current winning with each answer given</a></li>
@@ -139,7 +139,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Reality Check</a>
+          <a href="index.html">Realitio</a>
         
       </nav>
 
@@ -169,7 +169,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Reality Check Audit</li>
+      <li>Audit</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -188,8 +188,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="reality-check-audit">
-<h1>Reality Check Audit<a class="headerlink" href="#reality-check-audit" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="audit">
+<h1>Audit<a class="headerlink" href="#audit" title="Permalink to this headline">¶</a></h1>
 <p>Exported by Edmund Edgar from document at
 <a class="reference external" href="https://docs.google.com/document/d/1__9q9k3iJ7XoRIvW9MHtHfN59Hv4CcDrUCH4qgAGxQk">https://docs.google.com/document/d/1__9q9k3iJ7XoRIvW9MHtHfN59Hv4CcDrUCH4qgAGxQk</a></p>
 <div class="section" id="methodology">
@@ -216,8 +216,8 @@ there is a better way to do this or is just a matter of diverging tastes</p>
 <p><a class="reference external" href="https://github.com/realitykeys/realitycheck/blob/207278cecb4a99709dd7e6c1b601196ba11e676e/truffle/contracts/RealityCheck.sol">https://github.com/realitykeys/realitycheck/blob/207278cecb4a99709dd7e6c1b601196ba11e676e/truffle/contracts/RealityCheck.sol</a></p>
 <p>Deployment, UI and other external modules are not part of the audit and can introduce vulnerabilities.</p>
 </div>
-<div class="section" id="audit">
-<h2>Audit<a class="headerlink" href="#audit" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h2>Audit<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="first-pass">
 <h3>First Pass<a class="headerlink" href="#first-pass" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="l413-minor-bondmustbezero-is-always-true">
@@ -253,7 +253,7 @@ there is a better way to do this or is just a matter of diverging tastes</p>
 <p>The argument has been held that such an attack is only one of many manipulation attacks inherently possible in the Metamask/ Browser ecosystem. Because the other vulnerabilities are unresolved in such a setup, resolving this problem would still enable similar attacks.</p>
 <p>Edmund Edgar: So the attack vector is that, can we fool the arbitrator about the address of the RealityCheck contract. Maybe a bigger issue for fooling regular users, eg if you hack my dapp source code etherdelta-style you can make them think they’re interacting with the real contract when really it’s the attacker’s contract. Knowing which contract you’re dealing with is kind-of the central flaw in the whole metamask security model right now, along with the fact that the user can’t really realistically tell what message they’re signing…I think tricking the arbitrator feels like kind-of a milder case of that, in that they’re a specialist user with (hopefully) unusually good security.</p>
 <p>If the ONLY possible use of the RealityCheck system is seen in the context of a Web-Dapp with current level of security this argument is valid.</p>
-<p><a href="#id3"><span class="problematic" id="id4">**</span></a>If there is a likely option that RealityCheck will be used in more automated (e.g. used by other contract systems or used with in IoT and secure hardware) a more robust approach to security is recommended. **</p>
+<p><a href="#id4"><span class="problematic" id="id5">**</span></a>If there is a likely option that RealityCheck will be used in more automated (e.g. used by other contract systems or used with in IoT and secure hardware) a more robust approach to security is recommended. **</p>
 <p><strong>This holds more true if RealityCheck should be part of a decentralized permissionless service ecosystem, many in the Ethereum community envision.</strong></p>
 </div>
 <div class="section" id="minor-realitycheckapi-defined-but-never-explicitly-implemented">
