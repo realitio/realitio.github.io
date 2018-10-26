@@ -936,7 +936,8 @@ function validate(win) {
             options_num += 1;
         }
     }
-    if (win.find('.answer-option-container').hasClass('is-open') && question_type.val() == 'select' && options_num < 2) {
+
+    if (win.find('.answer-option-container').hasClass('is-open') && question_type.val().indexOf('select') != -1 && options_num < 2) {
         $('.edit-option-inner').addClass('is-error');
         valid = false;
     } else {
@@ -3073,6 +3074,8 @@ $(document).on('click', '.post-answer-button', function(e) {
                         err = true;
                     } else if (!ans.equals(new BigNumber(invalid_value)) && (ans.lt(rc_question.minNumber(question_json)) || ans.gt(rc_question.maxNumber(question_json)))) {
                         err = true;
+                    } else if (ans.lt(new BigNumber(0))) {
+                        err = true;
                     }
                     if (err) {
                         parent_div.find('div.input-container.input-container--answer').addClass('is-error');
@@ -3346,24 +3349,41 @@ $('.rcbrowser-textarea').on('keyup', function(e) {
 $(document).on('keyup', '.rcbrowser-input.rcbrowser-input--number', function(e) {
     let value = new BigNumber(web3js.toWei($(this).val()));
     //console.log($(this));
-    if (value === '') {
-        $(this).parent().parent().addClass('is-error');
-    } else if (!$(this).hasClass('rcbrowser-input--number--answer') && (value <= 0)) {
-        $(this).parent().parent().addClass('is-error');
-    } else if ($(this).hasClass('rcbrowser-input--number--bond')) {
-        $(this).addClass('edited');
-        let question_id = $(this).closest('.rcbrowser.rcbrowser--qa-detail').attr('data-question-id');
+    let bond_validation = function(ctrl){
+        ctrl.addClass('edited');
+        let question_id = ctrl.closest('.rcbrowser.rcbrowser--qa-detail').attr('data-question-id');
         let current_idx = question_detail_list[question_id]['history'].length - 1;
         let current_bond = new BigNumber(0);
         if (current_idx >= 0) {
             current_bond = question_detail_list[question_id]['history'][current_idx].args.bond;
         }
-        if (value.lt(current_bond.times(2))) {
-            $(this).parent().parent().addClass('is-error');
+
+        if (ctrl.val() === '' || value.lt(current_bond.times(2))) {
+            ctrl.parent().parent().addClass('is-error');
+            let min_bond = current_bond.times(2);
+            min_bond = web3js.fromWei(min_bond, 'ether');
+            ctrl.parent('div').next('div').find('.min-amount').text(min_bond.toNumber());
         } else {
-            $(this).parent().parent().removeClass('is-error');
+            ctrl.parent().parent().removeClass('is-error');
         }
-        show_bond_payments($(this));
+        show_bond_payments(ctrl);
+    }
+
+    if ($(this).val() === '') {
+        if ($(this).hasClass('rcbrowser-input--number--bond')) {
+            bond_validation($(this));
+        } else {
+            $(this).parent().parent().addClass('is-error');
+        }
+    }
+
+    if (($(this).closest('#post-a-question-window').length || $(this).hasClass('rcbrowser-input--number--answer'))
+        && value.lt(0)) {
+        $(this).parent().parent().addClass('is-error');
+    } else if ($(this).hasClass('rcbrowser-input--add-reward') && value.lte(0)) {
+        $(this).parent().parent().addClass('is-error');
+    } else if ($(this).hasClass('rcbrowser-input--number--bond')) {
+        bond_validation($(this));
     } else {
         $(this).parent().parent().removeClass('is-error');
     }
