@@ -3038,6 +3038,7 @@ body.error-no-metamask-plugin div.error-bar div.error-label.no-metamask-plugin-i
   display: inline !important; }
 
 #footer-notification-bar {
+  min-height: 80px;
   width: 100%;
   padding: 24px 0;
   background-color: #33373c;
