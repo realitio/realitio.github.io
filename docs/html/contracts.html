@@ -183,7 +183,7 @@
 <p>Each question can be referred to by its <code class="docutils literal"><span class="pre">question_id</span></code>, which is a <code class="docutils literal"><span class="pre">bytes32</span></code>.</p>
 <p>There is only one question with any given <code class="docutils literal"><span class="pre">question_id</span></code>, and there can only be one corresponding answer.</p>
 <p>You can fetch the final answer for a question by calling</p>
-<div class="highlight-javascript"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="nx">bytes32</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">getFinalAnswer</span><span class="p">(</span><span class="nx">bytes32</span> <span class="nx">question_id</span><span class="p">);</span>
+<div class="highlight-javascript"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="nx">bytes32</span> <span class="nx">response</span> <span class="o">=</span> <span class="nx">resultFor</span><span class="p">(</span><span class="nx">bytes32</span> <span class="nx">question_id</span><span class="p">);</span>
 </pre></div>
 </td></tr></table></div>
 <p>This will return <code class="docutils literal"><span class="pre">bytes32</span></code> data, or throw an error (<code class="docutils literal"><span class="pre">revert</span></code>) if the question does not exist or has not been finalized.</p>
