@@ -180,6 +180,7 @@
 <li>Arbitrators need to create and secure an Ethereum account, capable of interacting with the contracts. We provide JavaScript-based tools designed for providing these functions on an offline computer. However, consortium members are free to implement other methods of interacting with the contracts if they prefer.</li>
 <li>We use a Gnosis Multisig Wallet to manage the Arbitrator contract. As well as our command-line tool, this wallet provides a web UI allowing you to sign off on proposed transactions made by other parties, using the MetaMask Chrome extension.</li>
 <li>Before starting operation, consortium members should run a test on the main Ethereum network to confirm that they can perform tasks they may need to perform later. (See below).</li>
+<li>When arbitration is requested, by someone sending a fee to the arbitrator contract, arbitrators should consider the question under dispute, and send a transaction including the correct answer, and either the account that gave the final answer (if the previous final answer was correct) or the account that paid for arbitration (if the previous final answer was wrong).</li>
 </ul>
 <div class="section" id="operation-rules-and-terms-of-service">
 <h3>Operation rules and terms of service<a class="headerlink" href="#operation-rules-and-terms-of-service" title="Permalink to this headline">¶</a></h3>
