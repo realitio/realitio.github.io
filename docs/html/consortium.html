@@ -259,21 +259,21 @@ node show_address.js
 <p>Funds arrive in the Realitio or Arbitrator contract, then are moved to the Splitter wallet where they are allocated to the parties, at which point they can be withdrawn and moved on.
 Any address can call the following:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># (The first step is only needed if there are question fees)</span>
-node call_withdraw.js &lt;node&gt; &lt;gas_price&gt;
+node call_withdraw.js &lt;nonce&gt; &lt;gas_price&gt;
 
 <span class="c1"># Move funds from the arbitrator contract to the splitter wallet</span>
-node withdraw_to_registered_wallet.js &lt;node&gt; &lt;gas_price&gt;
+node withdraw_to_registered_wallet.js &lt;nonce&gt; &lt;gas_price&gt;
 
 <span class="c1"># Allocates funds in the splitter contract to each party&#39;s address</span>
-node allocate_splitter_funds.js &lt;node&gt; &lt;gas_price&gt;
+node allocate_splitter_funds.js &lt;nonce&gt; &lt;gas_price&gt;
 </pre></div>
 </div>
 <p>You can then extract your own split funds with:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>node withdraw_from_splitter_wallet.js &lt;node&gt; &lt;gas_price&gt;
+<div class="highlight-bash"><div class="highlight"><pre><span></span>node withdraw_from_splitter_wallet.js &lt;nonce&gt; &lt;gas_price&gt;
 </pre></div>
 </div>
 <p>You can send the funds received on with:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>node send_value.js &lt;node&gt; &lt;gas_price&gt; &lt;address&gt; &lt;amount_in_gwei&gt;
+<div class="highlight-bash"><div class="highlight"><pre><span></span>node send_value.js &lt;nonce&gt; &lt;gas_price&gt; &lt;address&gt; &lt;amount_in_gwei&gt;
 </pre></div>
 </div>
 </div>
