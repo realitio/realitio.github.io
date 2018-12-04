@@ -298,10 +298,13 @@ This can funded by the profits from people posting incorrect answers, and it sho
 <div class="section" id="performing-arbitration">
 <h4>Performing arbitration<a class="headerlink" href="#performing-arbitration" title="Permalink to this headline">¶</a></h4>
 <blockquote>
-<div><p>We prepare a json file at <cite>requests/arbitration.json</cite>. Each entry contains:
-* The question ID
-* The right answer
-* The account that should be credited with that answer: If the final answer was right, this should be that answer. If not it should be the user that paid for arbitration.</p>
+<div><p>We prepare a json file at <cite>requests/arbitration.json</cite>.  There is an example showing the format of this file at <cite>requests/arbitration.example.json</cite>.</p>
+<p>Each entry contains:</p>
+<ul class="simple">
+<li>The question ID</li>
+<li>The right answer</li>
+<li>The account that should be credited with that answer: If the final answer was right, this should be the account that gave that answer. If not it should be the account that paid for arbitration.</li>
+</ul>
 <p>You can then create a transaction for an item at a particular index in that list with:</p>
 </div></blockquote>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>node arbitrate.js &lt;nonce&gt; &lt;gas_price&gt; &lt;index&gt;
