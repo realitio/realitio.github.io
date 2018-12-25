@@ -2764,6 +2764,9 @@ input:placeholder-shown {
   top: -12px;
   right: 12px; }
 
+.continue-read-only-message {
+  font-size: 14px; }
+
 #fake-metamask {
   width: 300px;
   height: 300px;
