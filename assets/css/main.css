@@ -2411,7 +2411,8 @@ input[type=checkbox] {
   background-image: url(../image/icon-checkbox--blank.svg);
   background-repeat: no-repeat;
   background-position: center;
-  background-size: contain; }
+  background-size: contain;
+  border: 1px solid gray; }
 
 input[type=checkbox]:checked {
   background-image: url(../image/icon-checkbox--checked.svg); }
