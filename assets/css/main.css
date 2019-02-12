@@ -1832,6 +1832,9 @@ span.rcbrowser__close-button {
   float: right;
   margin: 0; }
 
+.arbitration-button.unpopulated {
+  visibility: hidden; }
+
 .arbitration-button--applied {
   font-size: 12px;
   color: #666666;
