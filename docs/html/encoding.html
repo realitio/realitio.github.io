@@ -173,26 +173,30 @@
 2
 3
 4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Did Donald Trump win the 2016 presidential election?&quot;</span><span class="p">,</span>
    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;politics&quot;</span>
+   <span class="nt">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;politics&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;lang&quot;</span><span class="p">:</span> <span class="s2">&quot;en_US&quot;</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table></div>
 <p>The system requires all data that is used in both questions and answers to be sent via the Ethereum blockchain. It is not sufficient to store the question data in an off-chain system such as IPFS, as the system needs to be sure that all participants were able to access the text.</p>
 <p>Once a question has been sent to the contract, it stores the plaintext it has seen in the event logs, and stores the hash of the content in contract storage.</p>
 <p>To minimize the amount of data that needs to be sent to the blockchain, questions are broken into two parts: A question template, and the question parameters that will be interpolated into the template. Parameters are treated like <cite>sprintf</cite> arguments.</p>
-<p>Multiple parameters can be assigned by delimiting with ␟ (u241f), which is the Unicode unit separator character. r.</p>
+<p>Multiple parameters can be assigned by delimiting with ␟ (u241f), which is the Unicode unit separator character.</p>
 <p>A template should consist of JSON-encoded data, with placeholders for parameters. The system is deployed with a generic built-in template for each question type, such as the following, deployed with template ID 0:</p>
 <div class="highlight-json"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
 4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
    <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;%s&quot;</span><span class="p">,</span>
    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">,</span>
-   <span class="nt">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;%s&quot;</span>
+   <span class="nt">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;%s&quot;</span><span class="p">,</span>
+   <span class="nt">&quot;lang&quot;</span><span class="p">:</span> <span class="s2">&quot;%s&quot;</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table></div>
@@ -202,10 +206,12 @@
 2
 3
 4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Was flight %s on date %s delayed by more than 3 hours?&quot;</span><span class="p">,</span>
   <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;flight-information&quot;</span>
+  <span class="nt">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;flight-information&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;lang&quot;</span><span class="p">:</span> <span class="s2">&quot;en_US&quot;</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table></div>
@@ -215,6 +221,7 @@
 <h2>Encoding answers<a class="headerlink" href="#encoding-answers" title="Permalink to this headline">¶</a></h2>
 <p>The answer must be expressed in terms of <cite>bytes32</cite> data. This may encode a number, a hash of some text, a number representing a selection specified in the JSON question definition, or boolean values for multiple options combined in a bitmask.</p>
 <p>A contract consuming this data should be prepared to make the necessary type conversion, most typically by casting a <cite>bytes32</cite> value into <cite>uint</cite> (for an unsigned number).</p>
+<p>For all the current types, invalid or incomprehensible questions may be denoted by the <cite>bytes32</cite> equivalent of <cite>-1</cite>, <cite>0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff</cite>. Note that it may not be possible to follow this convention for all future types of template.</p>
 </div>
 </div>
 
