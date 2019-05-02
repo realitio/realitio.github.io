@@ -1066,6 +1066,9 @@ body.pushing .page-qa #push-icon {
   color: #56bbe8;
   font-size: 15px; }
 
+div.category-list {
+  display: none; }
+
 .category-list {
   margin-top: -20px;
   margin-bottom: 0;
@@ -1098,6 +1101,7 @@ ul.main-nav {
   text-align: center; }
 
 .questions {
+  margin-top: -25px;
   width: 100%;
   position: relative; }
 
@@ -1239,6 +1243,9 @@ ul.main-nav {
   margin: 0 auto;
   padding: 24px 0 33px;
   border-bottom: solid 1px #d9dde0; }
+
+.questions__item:last-child {
+  border-bottom: none; }
 
 span.question-title {
   overflow: hidden;
@@ -3299,7 +3306,7 @@ table.ui-datepicker-calendar {
   background-image: url(https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/images/ui-icons_56bbe8_256x240.png) !important; }
 
 .spinner {
-  margin: 40px auto;
+  margin: 80px auto 80px;
   width: 40px;
   height: 40px;
   position: relative;
