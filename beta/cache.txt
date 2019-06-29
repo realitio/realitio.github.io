@@ -1,0 +1,11 @@
+
+- Question url 
+
+Questions:
+ - Whole question creates questionid
+
+Answers:
+ - Answer list from contract
+
+Put index on ipfs
+

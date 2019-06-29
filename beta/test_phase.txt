@@ -1,0 +1,9 @@
+
+
+Realitio is now live on mainnet. This is a fully-functional release, and we do not have a backdoor to stop or change it.
+
+We are currently the only arbitrator listed in the dapp, but other people are free to create arbitrator contracts of their own.
+
+We will be starting with a fairly low dispute fee of 1 ETH, and gradually increasing to around 10 ETH.
+
+
