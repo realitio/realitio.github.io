@@ -2893,7 +2893,7 @@ div.rcbrowser--qa-detail.question-state-open .reward-value-container {
 .add-reward-button {
   display: none; }
 
-div.rcbrowser--qa-detail.question-state-open .add-reward-button {
+div.rcbrowser--qa-detail.question-state-open .add-reward-button.is-open {
   display: inline-block !important; }
 
 .resolved-at-container {
