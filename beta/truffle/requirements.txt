@@ -9,7 +9,7 @@ pycryptodome==3.4.5
 pyethash==0.1.27
 pyparsing==2.1.10
 pysha3==1.0.2
-PyYAML==3.12
+PyYAML==5.1
 repoze.lru==0.6
 rlp==0.4.4
 scrypt==0.8.0
