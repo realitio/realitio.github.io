@@ -1,6 +1,0 @@
-realitio-contracts
-realitio-lib
-realitio-dapp
-realitio-cli
-
-subjectivocracy-contracts

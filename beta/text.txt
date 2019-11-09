@@ -1,7 +1,0 @@
-1) Each branch commits to a list of arbitrators
-2) You stake bonds in the currency of the parent branch
-3) You get paid out in all currencies where the arbitrator thinks you win
-4) If you don't escalate to arbitration, you can settle immediately
-5) If someone escalates to arbitration, you can't settle until the next window on the branch where it was escalated
-6) You need to escalate on any economically-relevant branch
-
