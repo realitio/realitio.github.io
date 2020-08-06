@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arbitration Consortium Setup &mdash; Realitio  documentation</title>
+  <title>Arbitration Consortium Setup &mdash; reality.eth  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Realitio  documentation" href="index.html"/> 
+    <link rel="top" title="reality.eth  documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -54,7 +54,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Realitio
+            <a href="index.html" class="icon icon-home"> reality.eth
           
 
           
@@ -86,9 +86,8 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="dapp.html">Using the Realitio dapp</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Using Realitio from a contract</a></li>
-<li class="toctree-l1"><a class="reference internal" href="encoding.html">How data is encoded</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dapp.html">Using the Reality.eth dapp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Using Reality.eth from a contract</a></li>
 <li class="toctree-l1"><a class="reference internal" href="availability.html">Unavailability and null responses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="arbitrators.html">Arbitrators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fees.html">Fees and payments</a></li>
@@ -109,7 +108,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Realitio</a>
+          <a href="index.html">reality.eth</a>
         
       </nav>
 
@@ -167,7 +166,7 @@
 <div class="section" id="arbitration-contract-structure">
 <h2>Arbitration contract structure<a class="headerlink" href="#arbitration-contract-structure" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference external" href="https://etherscan.io/address/0x325a2e0f3cca2ddbaebb4dfc38df8d19ca165b47">The Realitio contract</a></li>
+<li><a class="reference external" href="https://etherscan.io/address/0x325a2e0f3cca2ddbaebb4dfc38df8d19ca165b47">The Reality.eth contract</a></li>
 <li><a class="reference external" href="https://etherscan.io/address/0x257FA39e697C43DFF95E1D2aF754eD0118c062AB">An Arbitrator contract</a></li>
 <li><a class="reference external" href="https://etherscan.io/address/0x257FA39e697C43DFF95E1D2aF754eD0118c062AB">A Gnosis MultiSig contract</a> instance to control the Arbitrator contract</li>
 <li><a class="reference external" href="https://etherscan.io/address/0xd6455e86834563Bd11bbEC3Ad2A4969197ba4666">A Splitter contract</a> for splitting and withdrawing funds from the Arbitrator contract</li>
@@ -256,7 +255,7 @@ node show_address.js
 </div>
 <div class="section" id="withdrawing-funds">
 <h4>Withdrawing funds<a class="headerlink" href="#withdrawing-funds" title="Permalink to this headline">¶</a></h4>
-<p>Funds arrive in the Realitio or Arbitrator contract, then are moved to the Splitter wallet where they are allocated to the parties, at which point they can be withdrawn and moved on.
+<p>Funds arrive in the Reality.eth or Arbitrator contract, then are moved to the Splitter wallet where they are allocated to the parties, at which point they can be withdrawn and moved on.
 Any address can call the following:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># (The first step is only needed if there are question fees)</span>
 node call_withdraw.js &lt;nonce&gt; &lt;gas_price&gt;

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Arbitrators &mdash; Realitio  documentation</title>
+  <title>Arbitrators &mdash; reality.eth  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Realitio  documentation" href="index.html"/>
+    <link rel="top" title="reality.eth  documentation" href="index.html"/>
         <link rel="next" title="Fees and payments" href="fees.html"/>
         <link rel="prev" title="Unavailability and null responses" href="availability.html"/> 
 
@@ -56,7 +56,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Realitio
+            <a href="index.html" class="icon icon-home"> reality.eth
           
 
           
@@ -88,9 +88,8 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="dapp.html">Using the Realitio dapp</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contracts.html">Using Realitio from a contract</a></li>
-<li class="toctree-l1"><a class="reference internal" href="encoding.html">How data is encoded</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dapp.html">Using the Reality.eth dapp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Using Reality.eth from a contract</a></li>
 <li class="toctree-l1"><a class="reference internal" href="availability.html">Unavailability and null responses</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Arbitrators</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#arbitration-models">Arbitration Models</a><ul>
@@ -123,7 +122,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Realitio</a>
+          <a href="index.html">reality.eth</a>
         
       </nav>
 
@@ -211,7 +210,7 @@
 <li><code class="docutils literal"><span class="pre">function</span> <span class="pre">getDisputeFee(bytes32</span> <span class="pre">question_id)</span> <span class="pre">constant</span> <span class="pre">returns</span> <span class="pre">(uint256)</span></code></li>
 <li><code class="docutils literal"><span class="pre">function</span> <span class="pre">requestArbitration(bytes32</span> <span class="pre">question_id)</span></code></li>
 </ul>
-<p>When <code class="docutils literal"><span class="pre">requestArbitration()</span></code> is called with a sufficient fee, they should call the following against the Realitio contract:</p>
+<p>When <code class="docutils literal"><span class="pre">requestArbitration()</span></code> is called with a sufficient fee, they should call the following against the Reality.eth contract:</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">notifyOfArbitrationRequest(bytes32</span> <span class="pre">question_id,</span> <span class="pre">address</span> <span class="pre">requester)</span></code></li>
 </ul>
@@ -228,10 +227,10 @@
 <div class="section" id="getting-information-about-the-arbitrator">
 <h2>Getting information about the arbitrator<a class="headerlink" href="#getting-information-about-the-arbitrator" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">function</span> <span class="pre">realitio()</span></code> should provide the address of the Realitio contract to which the arbitrator responds.</li>
-<li><code class="docutils literal"><span class="pre">function</span> <span class="pre">metadata()</span></code> should provide a string of json-encoded metadata. The following properties are scheduled for implementation in the Realitio dapp:<ul>
+<li><code class="docutils literal"><span class="pre">function</span> <span class="pre">realitio()</span></code> should provide the address of the Reality.eth contract to which the arbitrator responds.</li>
+<li><code class="docutils literal"><span class="pre">function</span> <span class="pre">metadata()</span></code> should provide a string of json-encoded metadata. The following properties are scheduled for implementation in the Reality.eth dapp:<ul>
 <li><code class="docutils literal"><span class="pre">tos</span></code>: A URI representing the location of a terms-of-service document for the arbitrator.</li>
-<li><code class="docutils literal"><span class="pre">template_hashes</span></code>: An array of hashes of templates supported by the arbitrator. If you have a numerical ID for a template registered with Realitio, you can look up this hash by calling the Realitio <code class="docutils literal"><span class="pre">template_hashes()</span></code> function.</li>
+<li><code class="docutils literal"><span class="pre">template_hashes</span></code>: An array of hashes of templates supported by the arbitrator. If you have a numerical ID for a template registered with Reality.eth, you can look up this hash by calling the Reality.eth <code class="docutils literal"><span class="pre">template_hashes()</span></code> function.</li>
 </ul>
 </li>
 </ul>
