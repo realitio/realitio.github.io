@@ -174,7 +174,7 @@ var rc;
 var rcrealitio; // Instance using our node
 
 var display_entries = {
-    'questions-latest': {
+    'questions-active': {
         'ids': [],
         'vals': [],
         'max_store': 50,
@@ -192,7 +192,7 @@ var display_entries = {
         'max_store': 50,
         'max_show': 6
     },
-    'questions-high-reward': {
+    'questions-upcoming': {
         'ids': [],
         'vals': [],
         'max_store': 50,
@@ -1872,6 +1872,7 @@ function populateSectionEntry(entry, question_data) {
     var is_arbitration_pending = isArbitrationPending(question_data);
     var is_finalized = isFinalized(question_data);
     var best_answer = question_data[Qi_best_answer];
+    var bond = web3js.fromWei(question_data[Qi_bond], 'ether');
 
     var options = '';
     if (typeof question_json['outcomes'] !== 'undefined') {
@@ -1889,6 +1890,8 @@ function populateSectionEntry(entry, question_data) {
     });
     entry.find('.question-bounty').text(bounty);
 
+    entry.find('.bond-value').text(bond);
+
     // For these purposes we just ignore any outstanding commits
     if (isAnswered(question_data)) {
         entry.find('.questions__item__answer').text(rc_question.getAnswerString(question_json, best_answer));
@@ -1896,6 +1899,10 @@ function populateSectionEntry(entry, question_data) {
     } else {
         entry.find('.questions__item__answer').text('');
         entry.removeClass('has-answer');
+    }
+
+    if (isQuestionBeforeOpeningDate(question_data)) {
+        entry.addClass('not-yet-open');
     }
 
     var is_answered = isAnswered(question_data);
@@ -1918,6 +1925,11 @@ function populateSectionEntry(entry, question_data) {
             entry.find('.created-time-label .timeago').attr('datetime', rc_question.convertTsToString(question_data[Qi_creation_ts]));
             timeAgo.render(entry.find('.created-time-label .timeago'));
         }
+    }
+    
+    if (isQuestionBeforeOpeningDate(question_data)) {
+        entry.find('.opening-time-label .timeago').attr('datetime', rc_question.convertTsToString(question_data[Qi_opening_ts]));
+        timeAgo.render(entry.find('.opening-time-label .timeago'));
     }
 
     return entry;
@@ -1969,7 +1981,9 @@ function handleQuestionLog(item) {
         }
 
         var is_finalized = isFinalized(question_data);
+        var is_before_opening = isQuestionBeforeOpeningDate(question_data);
         var bounty = question_data[Qi_bounty];
+        var opening_ts = question_data[Qi_opening_ts];
 
         if (is_finalized) {
             var insert_before = update_ranking_data('questions-resolved', question_id, question_data[Qi_finalization_ts], 'desc');
@@ -1982,22 +1996,25 @@ function handleQuestionLog(item) {
                 }
             }
 
-        } else {
-            var insert_before = update_ranking_data('questions-latest', question_id, created, 'desc');
+        } else if (is_before_opening) {
+
+            var insert_before = update_ranking_data('questions-upcoming', question_id, opening_ts, 'asc');
             if (insert_before !== -1) {
-                populateSection('questions-latest', question_data, insert_before);
-                $('#questions-latest').find('.scanning-questions-category').css('display', 'none');
-                if (display_entries['questions-latest']['ids'].length > 3 && $('#questions-latest').find('.loadmore-button').css('display') == 'none') {
-                    $('#questions-latest').find('.loadmore-button').css('display', 'block');
+                populateSection('questions-upcoming', question_data, insert_before);
+                $('#questions-upcoming').find('.scanning-questions-category').css('display', 'none');
+                if (display_entries['questions-upcoming']['ids'].length > 3 && $('#questions-upcoming').find('.loadmore-button').css('display') == 'none') {
+                    $('#questions-upcoming').find('.loadmore-button').css('display', 'block');
                 }
             }
 
-            var insert_before = update_ranking_data('questions-high-reward', question_id, bounty, 'desc');
+        } else {
+
+            var insert_before = update_ranking_data('questions-active', question_id, created, 'desc');
             if (insert_before !== -1) {
-                populateSection('questions-high-reward', question_data, insert_before);
-                $('#questions-high-reward').find('.scanning-questions-category').css('display', 'none');
-                if (display_entries['questions-high-reward']['ids'].length > 3 && $('#questions-high-reward').find('.loadmore-button').css('display') == 'none') {
-                    $('#questions-high-reward').find('.loadmore-button').css('display', 'block');
+                populateSection('questions-active', question_data, insert_before);
+                $('#questions-active').find('.scanning-questions-category').css('display', 'none');
+                if (display_entries['questions-active']['ids'].length > 3 && $('#questions-active').find('.loadmore-button').css('display') == 'none') {
+                    $('#questions-active').find('.loadmore-button').css('display', 'block');
                 }
             }
 
@@ -2132,6 +2149,17 @@ $(document).on('click', '.questions__item__title', function(e) {
         return true;
     }
 
+    e.preventDefault();
+    e.stopPropagation();
+
+    var question_id = $(this).closest('.questions__item').attr('data-question-id');
+
+    // Should repopulate and bring to the front if already open
+    openQuestionWindow(question_id);
+
+});
+
+$(document).on('click', '.mini-action-link', function(e) {
     e.preventDefault();
     e.stopPropagation();
 
@@ -3723,7 +3751,7 @@ function updateRankingSections(question, changed_field, changed_val) {
     if (changed_field == Qi_finalization_ts) {
         if (isFinalized(question)) {
             //console.log('isFinalized');
-            var sections = ['questions-latest', 'questions-closing-soon', 'questions-high-reward'];
+            var sections = ['questions-active', 'questions-closing-soon', 'questions-upcoming'];
             for (var i = 0; i < sections.length; i++) {
                 var s = sections[i];
                 //console.log('doing section', s);
@@ -3754,10 +3782,11 @@ function updateRankingSections(question, changed_field, changed_val) {
 
     } 
     if (changed_field == Qi_bounty || changed_field == Qi_finalization_ts) {
-        var insert_before = update_ranking_data('questions-high-reward', question_id, question[Qi_bounty].plus(question[Qi_bond]), 'desc');
+        //var insert_before = update_ranking_data('questions-upcoming', question_id, question[Qi_bounty].plus(question[Qi_bond]), 'desc');
+        var insert_before = update_ranking_data('questions-upcoming', question_id, question[Qi_opening_ts], 'desc');
         //console.log('update for new bounty', question[Qi_bounty], 'insert_before is', insert_before);
         if (insert_before !== -1) {
-            populateSection('questions-high-reward', question, insert_before);
+            populateSection('questions-upcoming', question, insert_before);
         }
     }
 
