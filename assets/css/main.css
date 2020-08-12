@@ -750,7 +750,7 @@ input, button, textarea, select {
   color: #939596; }
 
 #token-selection.uninitialized {
-  display: none; }
+  visibility: hidden; }
 
 h1.logo {
   overflow: hidden;
