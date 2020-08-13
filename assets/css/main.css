@@ -1339,7 +1339,7 @@ a.questions__item__title {
   color: #757b82; }
 
 .rcbrowser-main-header-title.question-title {
-  margin: 10px 0; }
+  margin: 10px 0px 0px 0px; }
 
 a.questions__item__title:hover {
   color: #56bbe8;
@@ -1854,9 +1854,10 @@ span.rcbrowser__close-button {
   margin-bottom: 1em;
   position: relative; }
 
-.rcbrowser-main-header-date {
+.rcbrowser-main-header-category-and-date {
   color: #666666;
-  font-size: 12px; }
+  font-size: 12px;
+  font-style: italic; }
 
 .rcbrowser--qa-detail .rcbrowser-main-header-subtitle {
   font-size: 12px;
