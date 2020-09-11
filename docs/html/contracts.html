@@ -223,10 +223,12 @@
 <div class="section" id="single-select">
 <h4>single-select<a class="headerlink" href="#single-select" title="Permalink to this headline">¶</a></h4>
 <p>A <code class="docutils literal"><span class="pre">single-select</span></code> type represents a list of outcomes, producing a select box in the dapp. It is expressed as a zero-indexed, json-encoded array.</p>
-<p>Which party’s nominee won the 2016 US presidential election?
-* <code class="docutils literal"><span class="pre">0</span></code>: Democrat
-* <code class="docutils literal"><span class="pre">1</span></code>: Republican
-* <code class="docutils literal"><span class="pre">2</span></code>: Libertarian</p>
+<p>Which party’s nominee won the 2016 US presidential election?</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">0</span></code>: Democrat</li>
+<li><code class="docutils literal"><span class="pre">1</span></code>: Republican</li>
+<li><code class="docutils literal"><span class="pre">2</span></code>: Libertarian</li>
+</ul>
 <p>The outcomes are supplied in a field called <code class="docutils literal"><span class="pre">outcomes</span></code>. There is also an <code class="docutils literal"><span class="pre">invalid</span></code> option (<code class="docutils literal"><span class="pre">0xff..ff</span></code>) which is added automatically.</p>
 <p><code class="docutils literal"><span class="pre">[&quot;Democrat&quot;,</span> <span class="pre">&quot;Republican&quot;,</span> <span class="pre">&quot;Libertarian&quot;]</span></code></p>
 </div>
@@ -270,9 +272,9 @@
 <p>See <a class="reference internal" href="#creating-templates"><span class="std std-ref">Custom templates</span></a> for how and why you can create your own custom template.</p>
 <p>Questions are creating by combining the ID of the template (for example, <cite>2</cite> for the built-in single-select template) with the unicode delimiter characther “␟”.</p>
 <p>For example, a simple boolean question intended for the category “news-politics” might use the string:
-<code class="docutils literal"><span class="pre">&quot;Did</span> <span class="pre">Donald</span> <span class="pre">Trump</span> <span class="pre">win</span> <span class="pre">the</span> <span class="pre">2016</span> <span class="pre">US</span> <span class="pre">presidential</span> <span class="pre">election?␟news-politics␟en</span></code></p>
+<code class="docutils literal"><span class="pre">Did</span> <span class="pre">Donald</span> <span class="pre">Trump</span> <span class="pre">win</span> <span class="pre">the</span> <span class="pre">2016</span> <span class="pre">US</span> <span class="pre">presidential</span> <span class="pre">election?␟news-politics␟en</span></code></p>
 <p>A question with multiple outcomes will need the JSON-encoded outcome list passed in, eg
-<code class="docutils literal"><span class="pre">&quot;Which</span> <span class="pre">party's</span> <span class="pre">nominee</span> <span class="pre">won</span> <span class="pre">the</span> <span class="pre">2016</span> <span class="pre">US</span> <span class="pre">presidential</span> <span class="pre">election?␟&quot;Democrat&quot;,&quot;Republican&quot;,&quot;Libertarian&quot;␟news-politics␟en</span></code></p>
+<code class="docutils literal"><span class="pre">Which</span> <span class="pre">party's</span> <span class="pre">nominee</span> <span class="pre">won</span> <span class="pre">the</span> <span class="pre">2016</span> <span class="pre">US</span> <span class="pre">presidential</span> <span class="pre">election?␟&quot;Democrat&quot;,&quot;Republican&quot;,&quot;Libertarian&quot;␟news-politics␟en</span></code></p>
 </div>
 </div>
 <div class="section" id="asking-questions">
@@ -306,6 +308,10 @@
 <p>The <code class="docutils literal"><span class="pre">nonce</span></code> is a user-supplied number that can be used to disambiguated deliberate repeated uses of the same question. You can use <code class="docutils literal"><span class="pre">0</span></code> if you never intend to ask the same question with the same settings twice.</p>
 <p>Any ETH provided with the <code class="docutils literal"><span class="pre">askQuestion</span></code> call will be used as a question reward, minus any fee the specified arbitrator requires when a new question is asked.</p>
 <p>The <code class="docutils literal"><span class="pre">askQuestion</span></code> call returns a <code class="docutils literal"><span class="pre">bytes32</span></code> ID. This ID is made by hashing the parameters, plus <code class="docutils literal"><span class="pre">msg.sender</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Etherscan “write contract” feature has been known to mangle the delimiter character.</p>
+</div>
 <div class="section" id="accepting-an-answer-only-if-something-has-happened">
 <h3>Accepting an answer only if something has happened<a class="headerlink" href="#accepting-an-answer-only-if-something-has-happened" title="Permalink to this headline">¶</a></h3>
 <p>Once a question has been created and the opening date (if set) reached, it can be answered immediately.</p>

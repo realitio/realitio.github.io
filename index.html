@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>reality.eth crowd-sourced smart oracle dapp</title>
-    <meta name="description" content="Reality.eth">
+    <title>reality.eth crowd-sourced smart contract oracle dapp</title>
+    <meta name="description" content="Reality.eth: A system for getting the answer to a question on the Ethereum blockchain">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel='shortcut icon' href='assets/image/favicon.ico' type='image/x-icon' />
     <!--
@@ -19,11 +19,12 @@
     <div id="primary-container">
         <div class="error-bar">
             <div class="error-label no-metamask-plugin-image">
-                <a href="https://metamask.io"><img src="assets/image/download-metamask.png" width="88px" height="24px"></a>
             </div>
             <div class="error-label no-metamask-plugin">
-                <span>You need to <a href="https://metamask.io">install the MetaMask plugin</a> to use Reality.eth.</span>
+                <span>You need to a web3-capable browser to use Reality.eth</span>
                 <br />
+                <br />
+                <a href="https://brave.com/">Download the Brave browser</a>.
                 <br />
                 <br />
                 <a class="continue-read-only-message" href="#">Not now, I'm just looking...</a>
@@ -44,9 +45,9 @@
             </select>
             </div>
             -->
-            <a id="help-center-button" href="">How It Works</a>
+            <a id="help-center-button" class="upper-button" href="">How It Works</a>
             <span id="push-icon">notifications_active</span>
-            <a id="your-qa-button" class="rcbrowser__open-button" href="" title="Your Question &amp; Answer" data-target-id="id2">My Account</a>
+            <a id="your-qa-button" class="rcbrowser__open-button upper-button" href="" data-target-id="id2">My Account</a>
             <h1 class="logo">
                 <a class="logo-link" data-full-url="https://reality.eth.link" href="/">Reality.eth</a>
             </h1>
@@ -56,6 +57,7 @@
                     <span class="network-status network-id-1">Main Ethereum Network</span>
                     <span class="network-status network-id-4">Rinkeby Test Network</span>
                     <span class="network-status network-id-42">Kovan Test Network</span>
+                    <span class="network-status network-id-100">XDAI Network (Just testing, not for production use yet)</span>
                     <span class="network-status network-id-123411710">Local Test Network</span>
                     <span class="network-status network-id-unknown">Unknown Test Network</span>
                 </div>
