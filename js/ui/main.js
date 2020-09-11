@@ -109,7 +109,8 @@ const RPC_NODES = {
 const START_BLOCKS = {
     1: 6531147,
     4: 3175028, // for quicker loading start more like 4800000,
-    42: 10350865
+    42: 10350865,
+    100: 11938534
 }
 var START_BLOCK;
 
@@ -4482,7 +4483,7 @@ function initCurrency(curr) {
     token_json = token_json_by_curr[currency];
     // NB For XDAI we consider it ETH underneath and just change the text, which we don't know until network load
     $('.token-ticker-text').text(currency);
-    $('select#token-selection').val(curr).removeClass('uninitialized');
+    $('select#token-selection').val(curr);
 }
 
 window.addEventListener('load', function() {
@@ -4535,7 +4536,8 @@ window.addEventListener('load', function() {
             // Special case for XDAI, which looks like ETH underneath
             if (net_id == "100") {
                 $('.token-ticker-text').text('XDAI');
-                $('select#token-selection').hide(); // No other tokens are supported on XDAI at the moment
+            } else {
+                $('select#token-selection').removeClass('uninitialized');
             }
             populateArbitratorSelect(arbitrator_list[net_id]);
         }
