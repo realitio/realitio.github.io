@@ -3034,7 +3034,8 @@ div.rcbrowser--qa-detail.has-answer .bond-value-container {
   padding: 4px 6px 6px;
   line-height: 1.3;
   border-radius: 3px;
-  display: none; }
+  display: none;
+  font-style: italic; }
 
 div.rcbrowser--qa-detail .answer-debit-info {
   display: none; }
