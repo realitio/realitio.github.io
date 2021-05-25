@@ -3550,3 +3550,9 @@ body.foreign-proxy-transaction-sent .foreign-proxy-transaction-sent-only {
   background-color: #f5f6f7;
   padding: 6px;
   border: 1px solid #56bbe8; }
+
+span.add-network-button > a {
+  text-decoration: underline; }
+
+span.add-network-button > a:hover {
+  text-decoration: none; }
